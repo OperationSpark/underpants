@@ -1,7 +1,7 @@
 // This makes the arguments variable behave the way we want it to and a few
 // other things. For more info:
 // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Strict_mode
-'use strict';
+
 
 var _ = {};
 
@@ -21,6 +21,9 @@ var _ = {};
 *   _.identity({a: "b"}) === {a: "b"}
 */
 
+_.identity = function(value){
+  return value;
+}
 
 
 
@@ -306,6 +309,7 @@ var _ = {};
 //////////////////////////////////////////////////////////////////////
 // DON'T REMOVE THIS CODE ////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////
+
 
 if((typeof process !== 'undefined') &&
    (typeof process.versions.node !== 'undefined')) {

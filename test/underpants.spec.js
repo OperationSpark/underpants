@@ -3,7 +3,7 @@ const
     _ = require(path),
     expect = require('chai').expect,
     assert = require('chai').assert,
-    sinon = require('sinon'); 
+    sinon = require('sinon');
 
 describe('Underpants', function() {
 

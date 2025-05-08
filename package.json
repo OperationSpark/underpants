@@ -9,8 +9,7 @@
   },
   "scripts": {
     "pretest": "npm install",
-    "test": "mocha ./test/underpants.spec.js || :",
-    "posttest": "rm -rf ./test ./node_modules"
+    "test": "mocha ./test/underpants.spec.js || :"
   },
   "repository": {
     "type": "git",

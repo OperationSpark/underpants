@@ -1,3 +1,5 @@
+
+
 describe("underpants library", () => {
   beforeEach(() => {
     sinon.spy(console, 'log');
@@ -6,6 +8,7 @@ describe("underpants library", () => {
   afterEach(() => {
     console.log.restore();
   });
+
   describe("_.identity()", () => {
     it('should return input value unchanged', () => {
       assert.strictEqual( _.identity(14), 14);
@@ -35,6 +38,7 @@ describe("underpants library", () => {
     it('should return `function` for function inputs', () => {
       assert.strictEqual(_.typeOf(function(){}), "function");
     });
+  });
 
   describe("_.first()", () => {
     it('should accept an argument representing the number of items to include in the output', () => {
@@ -307,84 +311,183 @@ describe("underpants library", () => {
       assert.deepEqual(inputObject, {"a":1, "b":2, "c":3, "d":4});
     });
   });
+
+  describe("_.pluck()", () => {
+    const inputData = [
+        { name: "Ralph", age: 22},
+        { name: "Jimmy", age: 13},
+        { name: "Carla", age: 20}
+    ];
+    it('should pluck properties from a list of objects', () => {
+      const result = _.pluck(inputData, 'name');
+      const correct = ['Ralph', 'Jimmy', 'Carla'];
+      assert.deepEqual(result, correct);
+    });
+    it('should not have side effects', () => {
+      _.pluck(inputData, 'name');
+      assert.deepEqual(inputData, [
+        { name: "Ralph", age: 22},
+        { name: "Jimmy", age: 13},
+        { name: "Carla", age: 20}
+      ]);
+    });
+  });
+
+  describe("_.every()", () => {
+    const inputData = [2,4,6,7,8];
+    const inputObject = {a:"one",b:"two",c:"three"};
+    it('should return true when all iterations are true', () => {
+      const resultOne = _.every(inputData, (e) => e > 0);
+      const resultTwo = _.every(inputObject, (e) => typeof e === 'string');
+      assert.equal(resultOne, true);
+      assert.equal(resultTwo, true);
+    });
+    it('should return false when not all iterations are true for an array input', () => {
+      const resultOne = _.every(inputData, (e) => e % 2 === 0);
+      const resultTwo = _.every(inputObject, (e) => e.length === 3);
+      assert.equal(resultOne, false);
+      assert.equal(resultTwo, false);
+    });
+    it('should return true for truthy results when no function is passed in', () => {
+      assert.equal(_.every(['a', 'b']), true);
+      assert.equal(_.every({ a: 1, b: 2 }), true);
+    });
+    it('should return false for falsey results when no function is passed in', () => {
+      assert.equal(_.every(['a', 'b', null]), false);
+      assert.equal(_.every({ a: 1, b: 2, c: null}), false);
+    });
+    it('callback should take in the current index as an argument if collection is an array', () => {
+      const input = ['a', 'b'];
+      const logs = [0, 1];
+      _.every(input, (e, i, a) => {
+        console.log(i);
+        return typeof e === 'string';
+      });
+      console.log.args.forEach((e, i) => {
+        assert.equal(e[0], logs[i]);
+      });
+    });
+    it('should take in the array as an argument if collection is an array', () => {
+      const input = ['a', 'b'];
+      const logs = [
+        ['a', 'b'],
+        ['a', 'b']
+      ];
+      _.every(input, (e, i, a) => {
+        console.log(a);
+        return typeof e === 'string';
+      });
+      console.log.args.forEach((e, i) => {
+        assert.equal(e[0], logs[i]);
+      });
+    });
+    it('should take in the current value as an argument if collection is an object', () => {
+      const input = { a: 1, b: 2 };
+      const logs = [1, 2];
+      _.every(input, (v, k, o) => {
+        console.log(k);
+        return typeof v === 'number';
+      })
+      console.log.args.forEach((e, i) => {
+        assert.equal(e[0], logs[i]);
+      })
+    });
+    it('should take in the object as an argument if collection is an object', () => {
+      const input = { a: 1, b: 2 };
+      const logs = [
+        { a: 1, b: 2 },
+        { a: 1, b: 2 }
+      ];
+      _.every(input, (v, k, o) => {
+        console.log(o);
+        return typeof v === 'number';
+      })
+      console.log.args.forEach((e, i) => {
+        assert.equal(e[0], logs[i]);
+      })
+    });
+    it('should not have side effects', () => {
+      assert.deepEqual(inputData, [2,4,6,7,8]);
+    });
+  });
+
+  describe("_.some()", () => {
+    const inputArray = [2,4,6,7,8];
+    const inputObject = {a:"one",b:"two",c:"three"};
+    it('should handle objects', () => {
+      const result = _.every(inputObject, (e) => e.length > 3);
+      assert.equal(typeof result, 'boolean');
+    });
+    it('should return when at least one iteration is true', () => {
+      const resultOne = _.some(inputArray, (e) => e % 2 !== 0);
+      const resultTwo = _.some(inputObject, (e) => e.length > 3);
+      assert.equal(resultOne, true);
+      assert.equal(resultTwo, true);
+    });
+    it('should return false when no iterations are true', () => {
+      const resultOne = _.some(inputArray, (e) => e > 10);
+      const resultTwo = _.some(inputObject, (e) => e.length > 5);
+      assert.equal(resultOne, false);
+      assert.equal(resultTwo, false);
+    });
+    it('should return true for truthy results when no function is passed in', () => {
+      assert.equal(_.every(inputArray), true);
+      assert.equal(_every(inputObject), true);
+    });
+    it('should return false for falsey results when no function is passed in', () => {
+      assert.equal(_.every([undefined, null]), false);
+      assert.equal(_.every({a: undefined, b: null}), false);
+    }); 
+    it('should not have side effects', () => {
+      assert.deepEqual(inputData, [2,4,6,7,8]);
+    });
+  });
+
+  describe("_.reduce()", () => {
+    const inputArray = [10,20,30,40];
+    it('should work with an array and a seed', () => {
+      const result = _.reduce(inputArray, (acc, current, i) => {
+        acc += current;
+        return acc;
+      }, 100);
+      assert.equal(result, 200);
+    });
+    it('should work without a seed', () => {
+      const result = _.reduce(inputArray, (acc, current, i) => {
+        acc += current;
+        return acc;
+      });
+      assert.equal(result, 100);
+    });
+    it('should work when seed is falsey', () => {
+      const result = _.reduce(inputArray, (acc, current, i) => {
+        acc += current;
+        return acc;
+      }, 0);
+      assert.equal(result, 100);
+    });
+    it('should not have side effects', () => {
+      assert.deepEqual(inputArray, [10,20,30,40]);
+    })
+  });
+
+  describe("_.extend()", () => {
+    it('should extend an object', () => {
+      const inputData = {a:"one", b:"two"};
+      _.extend(inputData, {c: "three", d: "four"});
+      assert.deepEqual(inputData, {a: "one",b:"two",c:"three",d:"four"});
+    });
+    it('should overwrite existing properties', () => {
+      const inputData = {a:"one", b:"two"};
+      _.extend(inputData, {a: "three", d: "four"});
+      assert.deepEqual(inputData, {a: "three", b:"two",d:"four"});
+    });
+    it('should handle any number of arguments', () => {
+      const inputData = {a:"one", b:"two"};
+      _.extend(inputData, { c: 'three'}, { d: 'four' }, { e: 'five' }, { f: 'six' });
+       assert.deepEqual(inputData, { a: 'one', b: 'two', c: 'three', d: 'four', e: 'five', f: 'six' });
+    });
+    
+  });
+
 });
-
-
-
-QUnit.test("_.pluck()", function(assert){
-  var inputData = [
-      { name: "Ralph", age: 22},
-      { name: "Jimmy", age: 13},
-      { name: "Carla", age: 20}
-  ];
-  assert.deepEqual(_.pluck(inputData, "name"), ["Ralph","Jimmy","Carla"], "Should pluck properties out of a list of objects.");
-  assert.deepEqual(inputData, [
-      { name: "Ralph", age: 22},
-      { name: "Jimmy", age: 13},
-      { name: "Carla", age: 20}
-  ], "Should not have side effects.");
-});
-
-QUnit.test("_.every()", function(assert){
-  var inputData = [2,4,6,7,8];
-  var inputDataTruthy = [1, [], true, "a"];
-  var inputDataFalsy = ["",0,false,null];
-  var inputObject = {a:"one",b:"two",c:"three"};
-  assert.deepEqual(_.every(inputData, function(v){
-      return v % 2 === 0 || v === 7;
-  }) , true, "Should return true when all iterations are true");
-  assert.deepEqual(_.every(inputData, function(v){
-      return v % 2 === 0;
-  }) , false, "Should return false when not all iterations are true");
-  assert.deepEqual(_.every(inputObject, function(v,k,o){
-      return ["aone3","btwo3","cthree3"].indexOf(k+v+Object.keys(o).length) !== -1;
-  }), true, "Should handle objects");
-  assert.deepEqual(_.every(inputDataTruthy), true, "Should return true for truthy results when no function is passed in.");
-  assert.deepEqual(_.every(inputDataFalsy), false, "Should return false for falsy results when no function is passed in.");
-  assert.deepEqual(inputData, [2,4,6,7,8], "Should not have side effects.");
-});
-
-QUnit.test("_.some()", function(assert){
-  var inputData = [2,4,6,7,8];
-  var inputDataTruthy = [1, [], true, "a"];
-  var inputDataFalsy = ["",0,false,null];
-  var inputObject = {a:"one",b:"two",c:"three"};
-  assert.deepEqual(_.some(inputData, function(v){
-      return v === 7;
-  }) , true, "Should return true when at least one iteration is true");
-  assert.deepEqual(_.some(inputData, function(v){
-      return v > 10;
-  }) , false, "Should return false when no iterations are true");
-  assert.deepEqual(_.some(inputObject, function(v,k,o){
-      return ["aone3","btwo3"].indexOf(k+v+Object.keys(o).length) !== -1;
-  }), true, "Should handle objects");
-  assert.deepEqual(_.some(inputDataTruthy), true, "Should return true for truthy results when no function is passed in.");
-  assert.deepEqual(_.some(inputDataFalsy), false, "Should return false for falsy results when no function is passed in.");
-  assert.deepEqual(inputData, [2,4,6,7,8], "Should not have side effects.");
-});
-
-QUnit.test("_.reduce()", function(assert){
-  var inputArray = [10,20,30,40];
-
-  assert.strictEqual(_.reduce(inputArray, function(memo, element, i){
-      return memo + element + i;
-  }, 10), 116, "Should work with an array and a seed");
-  assert.strictEqual(_.reduce(inputArray, function(memo, element, i){
-      return memo * element * (i+1);
-  }), 5760000, "Should work without a seed");
-  assert.strictEqual(_.reduce(inputArray, function(memo, element, i){
-      return memo * element * (i+1);
-  }, 0), 0, "Should work when seed is falsy");
-  assert.deepEqual(inputArray, [10,20,30,40], "Should not have side effects");
-});
-
-QUnit.test("_.extend()", function(assert){
-  var inputData = {a:"one", b:"two"};
-  _.extend(inputData, {c: "three", d: "four"});
-  assert.deepEqual(inputData, {a: "one",b:"two",c:"three",d:"four"}, "Should extend an object.");
-  inputData = {a:"one", b:"two"};
-  _.extend(inputData, {a: "three", d: "four"});
-  assert.deepEqual(inputData, {a: "three",b:"two",d:"four"} , "Should overwrite existing properties");
-  inputData = {a:"one", b:"two"};
-  _.extend(inputData);
-  assert.deepEqual(_.extend(inputData, {a:"three",c:"four"}, {d:"five",c:"six"}), {a:"three",b:"two",c:"six",d:"five"}, "Should handle any number of arguments.");

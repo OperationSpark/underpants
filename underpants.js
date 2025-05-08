@@ -23,7 +23,7 @@ var _ = {};
 
 _.identity = function(value){
   return value;
-}
+};
 
 
 
@@ -47,6 +47,17 @@ _.identity = function(value){
 * _.typeOf([1,2,3]) -> "array"
 */
 
+_.typeOf = (value) => {
+  if (typeof value !== 'object'){
+    return typeof value;
+  } else if (Array.isArray(value)){
+    return 'array';
+  } else if (value === null){
+    return 'null'
+  } else {
+    return 'object';
+  }
+};
 
 /** _.first
 * Arguments:
@@ -61,11 +72,23 @@ _.identity = function(value){
 *   2) What if <number> is greater than <array>.length?
 * Examples:
 *   _.first("ponies", 1) -> []
+*   _.first(["a", "b", "c"], -1) -> []
 *   _.first(["a", "b", "c"], "ponies") -> "a"
 *   _.first(["a", "b", "c"], 1) -> "a"
 *   _.first(["a", "b", "c"], 2) -> ["a", "b"]
 */
 
+_.first = (array, n) => {
+  if (!Array.isArray(array)){
+    return [];
+  } else if (n === undefined){
+    return array[0];
+  } else if (n < 0){
+    return [];
+  }
+
+  return array.slice(0, n);
+}
 
 /** _.last
 * Arguments:

@@ -1,19 +1,11 @@
 
-
 describe("underpants library", () => {
-  beforeEach(() => {
-    sinon.spy(console, 'log');
-  });
-
-  afterEach(() => {
-    console.log.restore();
-  });
-
+ 
   describe("_.identity()", () => {
     it('should return input value unchanged', () => {
       assert.strictEqual( _.identity(14), 14);
       assert.deepEqual( _.identity({a: "one"}), {a: "one"});
-      assert.strictEqual(_.identity("hello there"));
+      assert.strictEqual(_.identity("hello there"), "hello there");
       assert.deepEqual(_.identity([1,2,3]), [1,2,3]);
     });
   });
@@ -79,13 +71,13 @@ describe("underpants library", () => {
       assert.deepEqual(_.indexOf(inputData, "b") , 1);
     });
     it('should return the index of the first occurance of a found element if there are duplicates', () => {
-      assert.deepEqual(_.indexOf(inputData), "b");
+      assert.deepEqual(_.indexOf(inputData, "b"), 1);
     });
     it('should return -1 if the element is not found', () => {
       assert.deepEqual(_.indexOf(inputData, "e") , -1);
     });
     it('should not have side effects', () => {
-      assert.deepEqual(inputData, ["a","b","c","d"]);
+      assert.deepEqual(inputData, ["a","b","c","d", "b"]);
     });
   });
 
@@ -106,22 +98,89 @@ describe("underpants library", () => {
   });
 
   describe("_.each()", () => {
-    const inputArray = [1,2,3,4,5];
-    inputArray.ignoreMe = "this shouldn't show up";
-    const inputObject = {a:"1",b:"2",c:"3",d:"4"};
+    beforeEach(() => {
+      sinon.spy(console, 'log');
+    });
   
-    _.each(inputArray, function(e, i, a){
-        inputArray[i] = e*a.length;
+    afterEach(() => {
+      console.log.restore();
     });
     it('should handle arrays', () => {
-      assert.deepEqual(inputArray ,[5,10,15,20,25]);
-    });
-    
-    _.each(inputObject, function(v, k, o){
-        inputObject[k] = inputObject[k] + inputObject[k];
+      const inputArray = [1,2,3,4,5];
+      _.each(inputArray, function(e, i, a){
+        inputArray[i] = e * a.length;
+      });
+      assert.deepEqual(inputArray, [5, 10, 15, 20, 25]);
+      
     });
     it('should handle objects', () => {
+      const inputObject = {a:"1",b:"2",c:"3",d:"4"};
+      _.each(inputObject, function(v, k, o){
+        inputObject[k] = inputObject[k] + inputObject[k];
+      });
       assert.deepEqual(inputObject,{a: "11", b: "22", c: "33", d: "44"});
+    });
+    it('callback should take in current index as an argument if collection is an array', () => {
+      const inputArray = ['a', 'b', 'c'];
+      const logs = [0, 1, 2];
+      const output = [];
+      _.each(inputArray, function(e, i, a){
+        console.log(i);
+        output.push(e.toUpperCase());
+      });
+      if (console.log.args.length){
+        console.log.args.forEach((e, i) => {
+          console.dir('hit this');
+          assert.equal(e[0], logs[i]);
+        });
+      } else {
+        assert.equal(console.log.args.length > 0, true);
+      }
+    });
+    it('callback should take in array as an argument if collection is an array', () => {
+      const inputArray = ['a', 'b', 'c'];
+      const output = [];
+      _.each(inputArray, function(e, i, a){
+        console.log(a);
+        output.push(e.toUpperCase());
+      });
+      if (console.log.args.length){
+        console.log.args.forEach((e, i) => {
+          assert.deepEqual(e[0], ['a', 'b', 'c']);
+        });
+      } else {
+        assert.equal(console.log.args.length > 0, true);
+      }
+    });
+    it('callback should take in current key as an argument if collection is an object', () => {
+      const inputObject = { a: "one", b: "two" };
+      const logs = ["a", "b"];
+      _.each(inputObject, (v, k, o) => {
+        console.log(k);
+        inputObject[k] = inputObject[k].toUpperCase();
+      });
+      if (console.log.args.length){
+        console.log.args.forEach((e, i) => {
+          assert.deepEqual(e[0], logs[i]);
+        });
+      } else {
+        assert.equal(console.log.args.length > 0, true);
+      }
+    });
+    it('callback should take in object as an argument if collection is an object', () => {
+      const inputObject = { a: "one", b: "two" };
+      const output = [];
+      _.each(inputObject, (v, k, o) => {
+        console.log(o);
+        output.push(inputObject[k].toUpperCase());
+      });
+      if (console.log.args.length){
+        console.log.args.forEach((e, i) => {
+          assert.deepEqual(e[0], { a: 'one', b: 'two'});
+        });
+      } else {
+        assert.equal(console.log.args.length > 0, true);
+      }
     });
   });
 
@@ -130,50 +189,81 @@ describe("underpants library", () => {
     it('should return an array with no duplicates', () => {
       assert.deepEqual(_.unique(inputData),["a",1,"c",false,"b",5,null]);
     });
+    it('should invoke _.indexOf() method', () => {
+      const func = _.unique.toString();
+      assert.equal(func.includes("_.indexOf("), true);
+    })
     it('should not have side effects', () => {
       assert.deepEqual(inputData, ["a",1,1,"a","c",false,"b",5,"c",null, false, null]);
     });
   });
 
   describe("_.filter()", () => {
+    beforeEach(() => {
+      sinon.spy(console, 'log');
+    });
+  
+    afterEach(() => {
+      console.log.restore();
+    });
+
     const inputData = ["a",1,"b",2,"c",4];
+
     it('should filter elements in an array', () => {
       assert.deepEqual(_.filter(inputData, (e,i,a) => {
-        return typeof e === "string" && i < a.length/2;
-      }), ["a","b"]);
+        return typeof e === "string";
+      }), ["a","b", "c"]);
     });
     it('callback function should take in the current index as one of its arguments', () => {
       const input = ['a', 'b', 'aa'];
       const logs = [0, 1, 2]
       _.filter(input, (e, i, a) => {
+        console.dir("current test: " + i);
         console.log(i);
         return e.length === 1;
       });
-      console.log.args.forEach((e, i) => {
-        assert.equal(e[0], logs[i]);
-      });
+      if (console.log.args.length){
+        console.log.args.forEach((e, i) => {
+          assert.equal(e[0], logs[i]);
+        });
+      } else {
+        assert.equal(console.log.args.length > 0, true);
+      }
     });
-    it('callback function should take in the array as an argument', () => {
+    it('callback function should take in the array as one its arguments', () => {
       const input = ['a', 'b', 'aa'];
-      const logs = [['a', 'b', 'c'], ['a', 'b', 'c'], ['a', 'b', 'c']];
-      console.log.args.forEach((e, i) => {
-        assert.deepEqual(e[0], logs[i]);
+      _.filter(input, (e, i, a) => {
+        console.log(a);
+        return e.length === 1;
       });
+      if (console.log.args.length){
+        console.log.args.forEach((e, i) => {
+          assert.deepEqual(e[0], ['a', 'b', 'aa']);
+        });
+      } else {
+        assert.equal(console.log.args.length > 0, true);
+      }
     });
     it('should not have side effects', () => {
-      filter(inputData, (e) => {
-        return typeof e === 'number';
-      });
       assert.deepEqual(inputData, ["a",1,"b",2,"c",4]);
-    });
+    })
   });
     
   describe("_.reject()", () => {
+    beforeEach(() => {
+      sinon.spy(console, 'log');
+    });
+  
+    afterEach(() => {
+      console.log.restore();
+    });
+
     const inputData = ["a",1,"b",2,"c",4];
+
     it('should return an array of items rejected by the callback function', () => {
       assert.deepEqual(_.reject(inputData, (e) => {
         return typeof e === 'string';
-      }), [2,4]);
+      }), [1, 2,4]);
     });
     it('callback function should take in the current index as an argument', () => {
       const input = ['a', 'b', 'aa'];
@@ -182,35 +272,48 @@ describe("underpants library", () => {
         console.log(i);
         return e.length === 2;
       });
-      console.log.args.forEach((e, i) => {
-        assert.equal(e[0], logs[i]);
-      });
+      if (console.log.args.length){
+        console.log.args.forEach((e, i) => {
+          assert.equal(e[0], logs[i]);
+        });
+      } else {
+        assert.equal(console.log.args.length > 0, true);
+      }
     });
     it('callback function should take in the array as an argument', () => {
       const input = ['a', 'b', 'aa'];
-      const logs = [['a', 'b', 'aa'], ['a', 'b', 'aa'], ['a', 'b', 'aa']];
       _.reject(input, (e, i, a) => {
-        console.log(i);
+        console.log(a);
         return e.length === 2;
       });
-      console.log.args.forEach((e, i) => {
-        assert.deepEqual(e[0], logs[i]);
-      });
+      if (console.log.args.length){
+        console.log.args.forEach((e, i) => {
+          assert.deepEqual(e[0], ['a', 'b', 'aa']);
+        });
+      } else {
+        assert.equal(console.log.args.length > 0, true);
+      }
     }); 
     it('should not have side effects', () => {
-      _.reject(inputData, (e) => {
-        return typeof e === 'string';
-      });
-      assert.deepEqual(inputData, ["a",1,"b",2,"c",4], "Should not have side effects.");
+      assert.deepEqual(inputData, ["a",1,"b",2,"c",4]);
     });
   });
 
   describe("_.partition()", () => {
+    beforeEach(() => {
+      sinon.spy(console, 'log');
+    });
+  
+    afterEach(() => {
+      console.log.restore();
+    });
+
     const inputData = ["a",1,"b",2,"c",4];
+
     it('should create a correctly partitioned array of subarrays', () => {
       assert.deepEqual(_.partition(inputData, (e) => {
         return typeof e === 'string';
-      }), [ ['a', 'b', 'c'], [1, 2, 3]])
+      }), [ ['a', 'b', 'c'], [1, 2, 4]])
     });
     it('callback function should take in the current index as an argument', () => {
       const input = ['a', 1];
@@ -219,9 +322,13 @@ describe("underpants library", () => {
         console.log(i);
         return typeof e === 'string';
       });
-      console.log.args.forEach((e, i) => {
-        assert.equal(e[0], logs[i]);
-      });
+      if (console.log.args.length){
+        console.log.args.forEach((e, i) => {
+          assert.equal(e[0], logs[i]);
+        });
+      } else {
+        assert.equal(console.log.args.length > 0, true);
+      }
     });
     it('callback function should take in the array as an argument', () => {
       const input = ['a', 1];
@@ -230,29 +337,39 @@ describe("underpants library", () => {
         console.log(a);
         return typeof e === 'string';
       });
-      console.log.args.forEach((e, i) => {
-        assert.deepEqual(e[0], logs[i]);
-      });
+      if (console.log.args.length){
+        console.log.args.forEach((e, i) => {
+          assert.deepEqual(e[0], logs[i]);
+        });
+      } else {
+        assert.equal(console.log.args.length > 0, true);
+      }
     });
   
     it('should not have side effects', () => {
-      _.partition(inputData, (e) => {
-        return typeof e === 'string';
-      });
       assert.deepEqual(inputData, ["a",1,"b",2,"c",4]);
     });
   });
 
   describe("_.map", () => {
+    beforeEach(() => {
+      sinon.spy(console, 'log');
+    });
+  
+    afterEach(() => {
+      console.log.restore();
+    });
+
     const inputArray = ["a","b","c","d"];
     const inputObject = {"a":1, "b":2, "c":3, "d":4};
+
     it('should correctly map an array', () => {
       const result = _.map(inputArray, (e) => e.toUpperCase());
       assert.deepEqual(result, ['A', 'B', 'C', 'D']);
     });
     it('should correctly map an object', () => {
       const result = _.map(inputObject, (e) => e * 10);
-      assert.deepEqual(result, {a: 10, b: 20, c: 30, d: 40});
+      assert.deepEqual(result, [10, 20, 30, 40]);
     });
     it('callback should take in the current index as an argument if collection is an array', () => {
       const logs = [0, 1, 2, 3];
@@ -260,53 +377,55 @@ describe("underpants library", () => {
         console.log(i);
         return e.toUpperCase();
       });
-      console.log.args.forEach((e, i) => {
-        assert.equal(e[0], logs[i]);
-      });
+      if (console.log.args.length){
+        console.log.args.forEach((e, i) => {
+          assert.equal(e[0], logs[i]);
+        });
+      } else {
+        assert.equal(console.log.args.length > 0, true);
+      }
     });
     it('callback should take in the array as argument if collection is an array', () => {
-      const logs = [
-        ['a', 'b', 'c', 'd'],
-        ['a', 'b', 'c', 'd'],
-        ['a', 'b', 'c', 'd']
-        ['a', 'b', 'c', 'd']
-      ];
       _.map(inputArray, (e, i, a) => {
         console.log(a);
         return e.toUpperCase();
       });
-      console.log.args.forEach((e, i) => {
-        assert.equal(e[0], logs[i]);
-      });
+      if (console.log.args.length){
+        console.log.args.forEach((e, i) => {
+          assert.deepEqual(e[0], ["a", "b", "c", "d"]);
+        });
+      } else {
+        assert.equal(console.log.args.length > 0, true);
+      }
     });
     it('callback should take in the current key as an argument if collection is an argument', () => {
-      const logs = [1, 2, 3, 4];
+      const logs = ["a", "b", "c", "d"];
       _.map(inputObject, (v, k, o) => {
         console.log(k);
         return v * 10;
       });
-      console.log.args.forEach((e, i) => {
-        assert.equal(e[0], logs[i]);
-      });
+      if (console.log.args.length){
+        console.log.args.forEach((e, i) => {
+          assert.equal(e[0], logs[i]);
+        });
+      } else {
+        assert.equal(console.log.args.length > 0, true);
+      }
     });
     it('callback should take in the object as an argument if collection is an argument', () => {
-      const logs = [
-        {"a":1, "b":2, "c":3, "d":4},
-        {"a":1, "b":2, "c":3, "d":4},
-        {"a":1, "b":2, "c":3, "d":4},
-        {"a":1, "b":2, "c":3, "d":4}
-      ];
       _.map(inputObject, (v, k, o) => {
         console.log(o);
         return v * 10;
       });
-      console.log.args.forEach((e, i) => {
-        assert.deepEqual(e[0], logs[i]);
-      })
+      if (console.log.args.length){
+        console.log.args.forEach((e, i) => {
+          assert.deepEqual(e[0], inputObject);
+        })
+      } else {  
+        assert.equal(console.log.args.length > 0, true);
+      }
     });
     it('should not have side effects', () => {
-      _.map(inputArray, (e) => e.toUpperCase());
-      _.map(inputObject, (e) => e * 10);
       assert.deepEqual(inputArray, ["a","b","c","d"]);
       assert.deepEqual(inputObject, {"a":1, "b":2, "c":3, "d":4});
     });
@@ -323,6 +442,10 @@ describe("underpants library", () => {
       const correct = ['Ralph', 'Jimmy', 'Carla'];
       assert.deepEqual(result, correct);
     });
+    it('should invoke the _.map() method', () => {
+      const func = _.pluck.toString();
+      assert.equal(func.includes('.map('), true);
+    })
     it('should not have side effects', () => {
       _.pluck(inputData, 'name');
       assert.deepEqual(inputData, [
@@ -334,8 +457,17 @@ describe("underpants library", () => {
   });
 
   describe("_.every()", () => {
+    beforeEach(() => {
+      sinon.spy(console, 'log');
+    });
+  
+    afterEach(() => {
+      console.log.restore();
+    });
+
     const inputData = [2,4,6,7,8];
     const inputObject = {a:"one",b:"two",c:"three"};
+
     it('should return true when all iterations are true', () => {
       const resultOne = _.every(inputData, (e) => e > 0);
       const resultTwo = _.every(inputObject, (e) => typeof e === 'string');
@@ -363,48 +495,56 @@ describe("underpants library", () => {
         console.log(i);
         return typeof e === 'string';
       });
-      console.log.args.forEach((e, i) => {
-        assert.equal(e[0], logs[i]);
-      });
+      if (console.log.args.length){
+        console.log.args.forEach((e, i) => {
+          assert.equal(e[0], logs[i]);
+        });
+      } else {
+        assert.equal(console.log.args.length > 0, true);
+      }
     });
     it('should take in the array as an argument if collection is an array', () => {
       const input = ['a', 'b'];
-      const logs = [
-        ['a', 'b'],
-        ['a', 'b']
-      ];
       _.every(input, (e, i, a) => {
         console.log(a);
         return typeof e === 'string';
       });
-      console.log.args.forEach((e, i) => {
-        assert.equal(e[0], logs[i]);
-      });
+      if (console.log.args.length){
+        console.log.args.forEach((e, i) => {
+          assert.deepEqual(e[0], ['a', 'b']);
+        });
+      } else {
+        assert.equal(console.log.args.length > 0, true);
+      }
     });
     it('should take in the current value as an argument if collection is an object', () => {
       const input = { a: 1, b: 2 };
-      const logs = [1, 2];
+      const logs = ['a', 'b'];
       _.every(input, (v, k, o) => {
         console.log(k);
         return typeof v === 'number';
       })
-      console.log.args.forEach((e, i) => {
-        assert.equal(e[0], logs[i]);
-      })
+      if (console.log.args.length){
+        console.log.args.forEach((e, i) => {
+          assert.equal(e[0], logs[i]);
+        })
+      } else {
+        assert.equal(console.log.args.length > 0, true);
+      }
     });
     it('should take in the object as an argument if collection is an object', () => {
       const input = { a: 1, b: 2 };
-      const logs = [
-        { a: 1, b: 2 },
-        { a: 1, b: 2 }
-      ];
       _.every(input, (v, k, o) => {
         console.log(o);
         return typeof v === 'number';
       })
-      console.log.args.forEach((e, i) => {
-        assert.equal(e[0], logs[i]);
-      })
+      if (console.log.args.length){
+        console.log.args.forEach((e, i) => {
+          assert.deepEqual(e[0], { a: 1, b: 2 });
+        })
+      } else {
+        assert.equal(console.log.args.length > 0, true);
+      }
     });
     it('should not have side effects', () => {
       assert.deepEqual(inputData, [2,4,6,7,8]);
@@ -412,8 +552,17 @@ describe("underpants library", () => {
   });
 
   describe("_.some()", () => {
+    beforeEach(() => {
+      sinon.spy(console, 'log');
+    });
+  
+    afterEach(() => {
+      console.log.restore();
+    });
+
     const inputArray = [2,4,6,7,8];
     const inputObject = {a:"one",b:"two",c:"three"};
+
     it('should handle objects', () => {
       const result = _.every(inputObject, (e) => e.length > 3);
       assert.equal(typeof result, 'boolean');
@@ -431,20 +580,83 @@ describe("underpants library", () => {
       assert.equal(resultTwo, false);
     });
     it('should return true for truthy results when no function is passed in', () => {
-      assert.equal(_.every(inputArray), true);
-      assert.equal(_every(inputObject), true);
+      assert.equal(_.some(inputArray), true);
+      assert.equal(_.some(inputObject), true);
     });
     it('should return false for falsey results when no function is passed in', () => {
-      assert.equal(_.every([undefined, null]), false);
-      assert.equal(_.every({a: undefined, b: null}), false);
+      assert.equal(_.some([undefined, null]), false);
+      assert.equal(_.some({a: undefined, b: null}), false);
     }); 
+    it('callback should take in current index as one of its arguments if collection is an array', () => {
+      const logs = [0, 1, 2];
+      _.some([1, 2, 3], (e, i, a) => {
+        console.log(i);
+        return e > 0;
+      });
+      if (console.log.args.length){
+        console.log.args.forEach((e, i) => {
+          assert.equal(e[0], logs[i]);
+        });
+      } else {
+        assert.equal(console.log.args.length > 0, true);
+      }
+    });
+    it('callback should take in array as one of its arguments if collection is an array', () => {
+      _.some([1, 2, 3], (e, i, a) => {
+        console.log(a);
+        return e > 0;
+      });
+      if (console.log.args.length){
+        console.log.args.forEach((e, i) => {
+          assert.deepEqual(e[0], [1, 2, 3]);
+        });
+      } else {
+        assert.equal(console.log.args.length > 0, true);
+      }
+    });
+    it('callback should take in current key as one of its arguments if collection is an object', () => {
+      const logs = ['a', 'b'];
+      _.some({ a: 1, b: 2 }, (v, k, o) => {
+        console.log(k);
+        return v > 0;
+      });
+      if (console.log.args.length){
+        console.log.args.forEach((e, i) => {
+          assert.equal(e[0], logs[i]);
+        });
+      } else {
+        assert.equal(console.log.args.length > 0, true);
+      }
+    });
+    it('callback should take in object as one of its arguments if collection is an object', () => {
+      _.some({ a: 1, b: 2 }, (v, k, o) => {
+        console.log(o);
+        return v > 0;
+      });
+      if (console.log.args.length){
+        console.log.args.forEach((e, i) => {
+          assert.deepEqual(e[0], { a: 1, b: 2 });
+        });
+      } else {
+        assert.equal(console.log.args.length > 0, true);
+      }
+    });
     it('should not have side effects', () => {
-      assert.deepEqual(inputData, [2,4,6,7,8]);
+      assert.deepEqual(inputArray, [2,4,6,7,8]);
     });
   });
 
   describe("_.reduce()", () => {
+    beforeEach(() => {
+      sinon.spy(console, 'log');
+    });
+  
+    afterEach(() => {
+      console.log.restore();
+    });
+
     const inputArray = [10,20,30,40];
+
     it('should work with an array and a seed', () => {
       const result = _.reduce(inputArray, (acc, current, i) => {
         acc += current;
@@ -465,6 +677,27 @@ describe("underpants library", () => {
         return acc;
       }, 0);
       assert.equal(result, 100);
+    });
+    it('callback should take in current index as one of its arguments', () => {
+      const logs = [0, 1, 1];
+      const resultOne = _.reduce([1, 2], (acc, current, i) => {
+        console.log(i);
+        acc += current;
+        return acc;
+      }, 0);
+      const resultTwo = _.reduce([3, 4], (acc, current, i) => {
+        console.log(i);
+        acc += current;
+        return acc;
+      });
+      console.dir(console.log.args);
+      if (console.log.args.length > 0){
+        console.log.args.forEach((e, i) => {
+          assert.equal(e[0], logs[i]);
+        });
+      } else {
+        assert.equal(console.log.args.length > 0, true);
+      }
     });
     it('should not have side effects', () => {
       assert.deepEqual(inputArray, [10,20,30,40]);

@@ -103,11 +103,24 @@ _.first = (array, n) => {
 *   2) What if <number> is greater than <array>.length?
 * Examples:
 *   _.last("ponies", 2) -> []
-*   _.last(["a", "b", "c"], "ponies") -> "c"
+*   _.last(["a", "b", "c"]) -> "c"
+*   _.last(["a", "b", "c"], -1) -> []
 *   _.last(["a", "b", "c"], 1) -> "c"
 *   _.last(["a", "b", "c"], 2) -> ["b", "c"]
 */
 
+_.last = (array, n) => {
+  if (!Array.isArray(array)){
+    return [];
+  } else if (n === undefined){
+    return array[array.length - 1];
+  } else if (n > array.length - 1){
+    return array;
+  } else if (n < 0){
+    return [];
+  }
+  return array.slice(-n);
+}
 
 /** _.indexOf
 * Arguments:
@@ -125,6 +138,15 @@ _.first = (array, n) => {
 *   _.indexOf(["a","b","c"], "d") -> -1
 */
 
+_.indexOf = (array, value) => {
+  for (let i = 0; i < array.length; i++){
+    if (array[i] === value){
+      return i;
+    }
+  }
+  return -1;
+};
+
 
 /** _.contains
 * Arguments:
@@ -140,6 +162,15 @@ _.first = (array, n) => {
 * Examples:
 *   _.contains([1,"two", 3.14], "two") -> true
 */
+
+_.contains = (array, value) => {
+  for (let i = 0; i < array.length; i++){
+    if (array[i] === value){
+      return true;
+    }
+  }
+  return false;
+}
 
 
 /** _.each
@@ -158,6 +189,18 @@ _.first = (array, n) => {
 *      -> should log "a" "b" "c" to the console
 */
 
+_.each = (collection, func) => {
+  if (Array.isArray(collection)){
+    for (let i = 0; i < collection.length; i++){
+      func(collection[i], i, collection);
+    }
+  } else {
+    for (let key in collection){ 
+      func(collection[key], key, collection);
+    }
+  }
+};
+
 
 /** _.unique
 * Arguments:
@@ -169,6 +212,15 @@ _.first = (array, n) => {
 *   _.unique([1,2,2,4,5,6,5,2]) -> [1,2,4,5,6]
 */
 
+_.unique = (array) => {
+  const output = [];
+  for (let i = 0; i < array.length; i++){
+    if (_.indexOf(output, array[i]) === -1){
+      output.push(array[i]);
+    }
+  }
+  return output;
+}
 
 /** _.filter
 * Arguments:
@@ -186,6 +238,16 @@ _.first = (array, n) => {
 *   use _.each in your implementation
 */
 
+_.filter = (array, func) => {
+  const output = [];
+  for (let i = 0; i < array.length; i++){
+    if (func(array[i], i, array)){
+      output.push(array[i]);
+    }
+  }
+  return output;
+}
+
 
 /** _.reject
 * Arguments:
@@ -199,6 +261,16 @@ _.first = (array, n) => {
 * Examples:
 *   _.reject([1,2,3,4,5], function(e){return e%2 === 0}) -> [1,3,5]
 */
+
+_.reject = (array, func) => {
+  const output = [];
+  for (let i = 0; i < array.length; i++){
+    if (!func(array[i], i, array)){
+      output.push(array[i]);
+    } 
+  }
+  return output;
+}
 
 
 /** _.partition
@@ -220,6 +292,18 @@ _.first = (array, n) => {
 }
 */
 
+_.partition = (array, func) => {
+  const output = [ [], [] ];
+  for (let i = 0; i < array.length; i++){
+    if (func(array[i], i, array)){
+      output[0].push(array[i]);
+    } else {
+      output[1].push(array[i]);
+    }
+  }
+  return output;
+};
+
 
 /** _.map
 * Arguments:
@@ -237,6 +321,21 @@ _.first = (array, n) => {
 *   _.map([1,2,3,4], function(e){return e * 2}) -> [2,4,6,8]
 */
 
+_.map = (collection, func) => {
+  const output = [];
+  if (Array.isArray(collection)){
+    for (let i = 0; i < collection.length; i++){
+      output.push(func(collection[i], i, collection));
+    }
+  } else {
+    for (let key in collection){
+      output.push(func(collection[key], key, collection));
+    }
+  }
+
+  return output;
+}
+
 
 /** _.pluck
 * Arguments:
@@ -249,6 +348,11 @@ _.first = (array, n) => {
 *   _.pluck([{a: "one"}, {a: "two"}], "a") -> ["one", "two"]
 */
 
+_.pluck = (array, prop) => {
+  return _.map(array, (e, i, a) => {
+    return e[prop];
+  });
+};
 
 /** _.every
 * Arguments:
@@ -271,6 +375,39 @@ _.first = (array, n) => {
 *   _.every([1,2,3], function(e){return e % 2 === 0}) -> false
 */
 
+_.every = (collection, func) => {
+  
+  if (Array.isArray(collection)){
+    if (func){
+      for (let i = 0; i < collection.length; i++){
+        if (!func(collection[i], i, collection)){
+          return false
+        }
+      }
+    } else {
+      for (let i = 0; i < collection.length; i++){
+        if (!collection[i]){
+          return false;
+        }
+      }
+    }
+  } else {
+    if (func){
+      for (let key in collection){
+        if (!func(collection[key], key, collection)){
+          return false;
+        }
+      }
+    } else {
+      for (let key in collection){
+        if (!collection[key]){
+          return false;
+        }
+      }
+    }
+  }
+  return true;
+};
 
 /** _.some
 * Arguments:
@@ -293,6 +430,39 @@ _.first = (array, n) => {
 *   _.some([1,2,3], function(e){return e % 2 === 0}) -> true
 */
 
+_.some = (collection, func) => {
+  if (Array.isArray(collection)){
+    if (func){
+      for (let i = 0; i < collection.length; i++){
+        if (func(collection[i], i, collection)){
+          return true;
+        }
+      }
+    } else {
+      for (let i = 0; i < collection.length; i++){
+        if (collection[i]){
+          return true;
+        }
+      }
+    }
+  } else {
+    if (func){
+      for (let key in collection){
+        if (func(collection[key], key, collection)){
+          return true;
+        }
+      }
+    } else {
+      for (let key in collection){
+        if (collection[key]){
+          return true;
+        }
+      }
+    }
+  }
+  return false;
+};
+
 
 /** _.reduce
 * Arguments:
@@ -313,6 +483,21 @@ _.first = (array, n) => {
 *   _.reduce([1,2,3], function(previousSum, currentValue, currentIndex){ return previousSum + currentValue }, 0) -> 6
 */
 
+_.reduce = (array, func, seed) => {
+  let result;
+  if (seed === undefined){
+    result = array[0];
+    for (let i = 1; i < array.length; i++){
+      result = func(result, array[i], i);
+    }
+  } else {
+    result = seed;
+    for (let i = 0; i < array.length; i++){
+      result = func(result, array[i], i);
+    }
+  }
+  return result;
+}
 
 /** _.extend
 * Arguments:
@@ -328,6 +513,13 @@ _.first = (array, n) => {
 *   _.extend(data, {b:"two"}); -> data now equals {a:"one",b:"two"}
 *   _.extend(data, {a:"two"}); -> data now equals {a:"two"}
 */
+
+_.extend = (target, ...objects) => {
+  for (let i = 0; i < objects.length; i++){
+    Object.assign(target, objects[i]);
+  }
+  return target;
+}
 
 //////////////////////////////////////////////////////////////////////
 // DON'T REMOVE THIS CODE ////////////////////////////////////////////

@@ -124,6 +124,7 @@ const _ = {};
 */
 
 
+
 /** _.each
 * Arguments:
 *   1) A collection
@@ -138,7 +139,22 @@ const _ = {};
 * Examples:
 *   _.each(["a","b","c"], function(e,i,a){ console.log(e)});
 *      -> should log "a" "b" "c" to the console
+*
+*   _.each({ a: 'one', b: 'two'}, function(v, k, o){ console.log(v)});
+*      -> should log "one" "two" to the console
 */
+
+_.each = (collection, func) => {
+  if (Array.isArray(collection)){
+    for (let i = 0; i < collection.length; i++){
+      func(collection[i], i, collection);
+    }
+  } else {
+    for (let key in collection){
+      func(collection[key], key, collection);
+    }
+  }
+}
 
 
 /** _.unique

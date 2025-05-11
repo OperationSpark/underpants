@@ -108,18 +108,20 @@ describe("underpants library", () => {
     });
     it('should handle arrays', () => {
       const inputArray = [1,2,3,4,5];
+      const output = [];
       _.each(inputArray, function(e, i, a){
-        inputArray[i] = e * a.length;
+        output.push(e * 10);
       });
-      assert.deepEqual(inputArray, [5, 10, 15, 20, 25]);
+      assert.deepEqual(output, [10, 20, 30, 40, 50]);
       
     });
     it('should handle objects', () => {
       const inputObject = {a:"1",b:"2",c:"3",d:"4"};
+      const output = [];
       _.each(inputObject, function(v, k, o){
-        inputObject[k] = inputObject[k] + inputObject[k];
+        output.push(v + v);
       });
-      assert.deepEqual(inputObject,{a: "11", b: "22", c: "33", d: "44"});
+      assert.deepEqual(output, ["11", "22", "33", "44"]);
     });
     it('callback should take in current index as an argument if collection is an array', () => {
       const inputArray = ['a', 'b', 'c'];

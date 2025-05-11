@@ -97,7 +97,7 @@ const _ = {};
 * Objectives:
 *   1) Return the index of <array> that is the first occurrance of <value>
 *   2) Return -1 if <value> is not in <array>
-*   3) Do not use [].indexOf()!
+*   3) Do not use [].indexOf()
 * Edge Cases:
 *   1) What if <array> has multiple occurances of val?
 *   2) What if <val> isn't in <array>?
@@ -105,6 +105,7 @@ const _ = {};
 *   _.indexOf(["a","b","c"], "c") -> 2
 *   _.indexOf(["a","b","c"], "d") -> -1
 */
+
 
 
 /** _.contains

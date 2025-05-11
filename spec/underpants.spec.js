@@ -82,4 +82,172 @@ describe("underpants library", () => {
     });
   });
 
+  describe("_.contains()", () => {
+    const inputData = [1,"3",4,5,"a","4","b"];
+    it('should return true if a list contains an element', () => {
+      assert.strictEqual(_.contains(inputData, "a") , true);
+    });
+    it("should return false if the list doesn't contain an element", () => {
+      assert.strictEqual(_.contains(inputData, "c") , false);
+    });
+    it('should not convert types when checking', () => {
+      assert.strictEqual(_.contains(inputData, 3) , false);
+    });
+    it('should not have side effects', () => {
+      assert.deepEqual(inputData, [1,"3",4,5,"a","4","b"]);
+    });
+  });
+
+  describe("_.each()", () => {
+    beforeEach(() => {
+      sinon.spy(console, 'log');
+    });
+  
+    afterEach(() => {
+      console.log.restore();
+    });
+    it('should handle arrays', () => {
+      const inputArray = [1,2,3,4,5];
+      _.each(inputArray, function(e, i, a){
+        inputArray[i] = e * a.length;
+      });
+      assert.deepEqual(inputArray, [5, 10, 15, 20, 25]);
+      
+    });
+    it('should handle objects', () => {
+      const inputObject = {a:"1",b:"2",c:"3",d:"4"};
+      _.each(inputObject, function(v, k, o){
+        inputObject[k] = inputObject[k] + inputObject[k];
+      });
+      assert.deepEqual(inputObject,{a: "11", b: "22", c: "33", d: "44"});
+    });
+    it('callback should take in current index as an argument if collection is an array', () => {
+      const inputArray = ['a', 'b', 'c'];
+      const logs = [0, 1, 2];
+      const output = [];
+      _.each(inputArray, function(e, i, a){
+        console.log(i);
+        output.push(e.toUpperCase());
+      });
+      if (console.log.args.length){
+        console.log.args.forEach((e, i) => {
+          console.dir('hit this');
+          assert.equal(e[0], logs[i]);
+        });
+      } else {
+        assert.equal(console.log.args.length > 0, true);
+      }
+    });
+    it('callback should take in array as an argument if collection is an array', () => {
+      const inputArray = ['a', 'b', 'c'];
+      const output = [];
+      _.each(inputArray, function(e, i, a){
+        console.log(a);
+        output.push(e.toUpperCase());
+      });
+      if (console.log.args.length){
+        console.log.args.forEach((e, i) => {
+          assert.deepEqual(e[0], ['a', 'b', 'c']);
+        });
+      } else {
+        assert.equal(console.log.args.length > 0, true);
+      }
+    });
+    it('callback should take in current key as an argument if collection is an object', () => {
+      const inputObject = { a: "one", b: "two" };
+      const logs = ["a", "b"];
+      _.each(inputObject, (v, k, o) => {
+        console.log(k);
+        inputObject[k] = inputObject[k].toUpperCase();
+      });
+      if (console.log.args.length){
+        console.log.args.forEach((e, i) => {
+          assert.deepEqual(e[0], logs[i]);
+        });
+      } else {
+        assert.equal(console.log.args.length > 0, true);
+      }
+    });
+    it('callback should take in object as an argument if collection is an object', () => {
+      const inputObject = { a: "one", b: "two" };
+      const output = [];
+      _.each(inputObject, (v, k, o) => {
+        console.log(o);
+        output.push(inputObject[k].toUpperCase());
+      });
+      if (console.log.args.length){
+        console.log.args.forEach((e, i) => {
+          assert.deepEqual(e[0], { a: 'one', b: 'two'});
+        });
+      } else {
+        assert.equal(console.log.args.length > 0, true);
+      }
+    });
+  });
+
+  describe("_.unique()", () => {
+    const inputData = ["a",1,1,"a","c",false,"b",5,"c",null,false,null];
+    it('should return an array with no duplicates', () => {
+      assert.deepEqual(_.unique(inputData),["a",1,"c",false,"b",5,null]);
+    });
+    it('should invoke _.indexOf() method', () => {
+      const func = _.unique.toString();
+      assert.equal(func.includes("_.indexOf("), true);
+    })
+    it('should not have side effects', () => {
+      assert.deepEqual(inputData, ["a",1,1,"a","c",false,"b",5,"c",null, false, null]);
+    });
+  });
+
+  describe("_.filter()", () => {
+    beforeEach(() => {
+      sinon.spy(console, 'log');
+    });
+  
+    afterEach(() => {
+      console.log.restore();
+    });
+
+    const inputData = ["a",1,"b",2,"c",4];
+
+    it('should filter elements in an array', () => {
+      assert.deepEqual(_.filter(inputData, (e,i,a) => {
+        return typeof e === "string";
+      }), ["a","b", "c"]);
+    });
+    it('callback function should take in the current index as one of its arguments', () => {
+      const input = ['a', 'b', 'aa'];
+      const logs = [0, 1, 2]
+      _.filter(input, (e, i, a) => {
+        console.dir("current test: " + i);
+        console.log(i);
+        return e.length === 1;
+      });
+      if (console.log.args.length){
+        console.log.args.forEach((e, i) => {
+          assert.equal(e[0], logs[i]);
+        });
+      } else {
+        assert.equal(console.log.args.length > 0, true);
+      }
+    });
+    it('callback function should take in the array as one its arguments', () => {
+      const input = ['a', 'b', 'aa'];
+      _.filter(input, (e, i, a) => {
+        console.log(a);
+        return e.length === 1;
+      });
+      if (console.log.args.length){
+        console.log.args.forEach((e, i) => {
+          assert.deepEqual(e[0], ['a', 'b', 'aa']);
+        });
+      } else {
+        assert.equal(console.log.args.length > 0, true);
+      }
+    });
+    it('should not have side effects', () => {
+      assert.deepEqual(inputData, ["a",1,"b",2,"c",4]);
+    })
+  });
+
 });

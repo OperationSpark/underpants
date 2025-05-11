@@ -144,17 +144,6 @@ const _ = {};
 *      -> should log "one" "two" to the console
 */
 
-_.each = (collection, func) => {
-  if (Array.isArray(collection)){
-    for (let i = 0; i < collection.length; i++){
-      func(collection[i], i, collection);
-    }
-  } else {
-    for (let key in collection){
-      func(collection[key], key, collection);
-    }
-  }
-}
 
 
 /** _.unique
@@ -166,6 +155,7 @@ _.each = (collection, func) => {
 * Examples:
 *   _.unique([1,2,2,4,5,6,5,2]) -> [1,2,4,5,6]
 */
+
 
 
 /** _.filter
@@ -183,6 +173,7 @@ _.each = (collection, func) => {
 * Extra Credit:
 *   use _.each in your implementation
 */
+
 
 
 /** _.reject

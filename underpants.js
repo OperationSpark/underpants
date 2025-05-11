@@ -3,7 +3,7 @@
 // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Strict_mode
 'use strict';
 
-var _ = {};
+const _ = {};
 
 
 /**
@@ -43,17 +43,7 @@ var _ = {};
 * _.typeOf([1,2,3]) -> "array"
 */
 
-_.typeOf = (value) => {
-  if (typeof value !== 'object'){
-    return typeof value;
-  } else if (Array.isArray(value)){
-    return 'array';
-  } else if (value === null){
-    return 'null';
-  } else {
-    return 'object';
-  }
-}
+
 
 /** _.first
 * Arguments:
@@ -65,13 +55,18 @@ _.typeOf = (value) => {
 *   3) Otherwise, return the first <number> items of <array>
 * Edge Cases:
 *   1) What if <number> is negative?
-*   2) What if <number> is greater than <array>.length?
+*   2) What if <number> is not provided?
+*   3) What if <number> is greater than the length of the array?
+*   3) What if <array> is not an array?
 * Examples:
 *   _.first("ponies", 1) -> []
-*   _.first(["a", "b", "c"], "ponies") -> "a"
+*   _.first(["a", "b", "c"], -1) -> []
+*   _.first(["a", "b", "c"]) -> "a"
 *   _.first(["a", "b", "c"], 1) -> "a"
 *   _.first(["a", "b", "c"], 2) -> ["a", "b"]
+*   _.first("a", "b", "c", 5) -> ["a", "b", "c"]
 */
+
 
 
 /** _.last

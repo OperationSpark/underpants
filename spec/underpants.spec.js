@@ -35,7 +35,7 @@ describe("underpants library", () => {
       assert.deepEqual(_.first(["a","b","c"],2) ,["a","b"]);
     });
     it('should return the first element if no numerical argument is given', () => {
-      assert.deepEqual(_.first(["a","b","c"]) ,"a");
+      assert.equal(_.first(["a","b","c"]) ,"a");
     });
     it('should return empty array if numerical argument is not a positive number', () => {
       assert.deepEqual(_.first(["a","b","c"], -1) ,[], "Should return empty list if numerical argument is not a positive number.");
@@ -53,7 +53,9 @@ describe("underpants library", () => {
       assert.deepEqual(_.last(["a","b","c"],2) ,["b","c"]);
     });
     it('should return the last element if no numerical argument is given', () => {
-      assert.deepEqual(_.last(["a","b","c"]) ,"c");
+      console.log('hit this test');
+      console.log(_.last);
+      assert.equal(_.last(["a","b","c"]) ,"c");
     });
     it('should return empty array if numerical argument is not a positive number', () => {
       assert.deepEqual(_.last(["a","b","c"], -1) ,[]);

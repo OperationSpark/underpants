@@ -479,7 +479,7 @@ describe("underpants library", () => {
       assert.equal(resultOne, true);
       assert.equal(resultTwo, true);
     });
-    it('should return false when not all iterations are true for an array input', () => {
+    it('should return false when not all iterations are true', () => {
       const resultOne = _.every(inputData, (e) => e % 2 === 0);
       const resultTwo = _.every(inputObject, (e) => e.length === 3);
       assert.equal(resultOne, false);

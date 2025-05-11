@@ -62,7 +62,6 @@ const _ = {};
 *   _.first("ponies", 1) -> []
 *   _.first(["a", "b", "c"], -1) -> []
 *   _.first(["a", "b", "c"]) -> "a"
-*   _.first(["a", "b", "c"], 1) -> "a"
 *   _.first(["a", "b", "c"], 2) -> ["a", "b"]
 *   _.first("a", "b", "c", 5) -> ["a", "b", "c"]
 */
@@ -80,9 +79,12 @@ const _ = {};
 * Edge Cases:
 *   1) What if <number> is negative?
 *   2) What if <number> is greater than <array>.length?
+*   3) What if <number> is not provided?
+*   4) What if <array> is not an array?
 * Examples:
 *   _.last("ponies", 2) -> []
-*   _.last(["a", "b", "c"], "ponies") -> "c"
+*   _.last(["a", "b", "c"], -1) -> []
+*   _.last(["a", "b", "c"], 5) -> ["a", "b", "c"]
 *   _.last(["a", "b", "c"], 1) -> "c"
 *   _.last(["a", "b", "c"], 2) -> ["b", "c"]
 */

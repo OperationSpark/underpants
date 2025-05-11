@@ -43,6 +43,17 @@ var _ = {};
 * _.typeOf([1,2,3]) -> "array"
 */
 
+_.typeOf = (value) => {
+  if (typeof value !== 'object'){
+    return typeof value;
+  } else if (Array.isArray(value)){
+    return 'array';
+  } else if (value === null){
+    return 'null';
+  } else {
+    return 'object';
+  }
+}
 
 /** _.first
 * Arguments:

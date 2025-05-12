@@ -21,7 +21,6 @@ const _ = {};
  */
 
 
-
 /** _.typeOf
  * Arguments:
  *   1) Any value
@@ -41,6 +40,7 @@ const _ = {};
  * _.typeOf("javascript") -> "string"
  * _.typeOf([1,2,3]) -> "array"
  */
+
 
 /** _.first
  * Arguments:
@@ -63,6 +63,7 @@ const _ = {};
  *   _.first("a", "b", "c", 5) -> ["a", "b", "c"]
  */
 
+
 /** _.last
  * Arguments:
  *   1) An array
@@ -84,6 +85,7 @@ const _ = {};
  *   _.last(["a", "b", "c"], 2) -> ["b", "c"]
  */
 
+
 /** _.indexOf
  * Arguments:
  *   1) An array
@@ -100,6 +102,7 @@ const _ = {};
  *   _.indexOf(["a","b","c"], "d") -> -1
  */
 
+
 /** _.contains
  * Arguments:
  *   1) An array
@@ -114,6 +117,7 @@ const _ = {};
  * Examples:
  *   _.contains([1,"two", 3.14], "two") -> true
  */
+
 
 /** _.each
  * Arguments:
@@ -134,6 +138,7 @@ const _ = {};
  *      -> should log "one" "two" to the console
  */
 
+
 /** _.unique
  * Arguments:
  *   1) An array
@@ -143,6 +148,7 @@ const _ = {};
  * Examples:
  *   _.unique([1,2,2,4,5,6,5,2]) -> [1,2,4,5,6]
  */
+
 
 /** _.filter
  * Arguments:
@@ -160,6 +166,7 @@ const _ = {};
  *   use _.each in your implementation
  */
 
+
 /** _.reject
  * Arguments:
  *   1) An array
@@ -172,6 +179,7 @@ const _ = {};
  * Examples:
  *   _.reject([1,2,3,4,5], function(e){return e%2 === 0}) -> [1,3,5]
  */
+
 
 /** _.partition
 * Arguments:
@@ -192,6 +200,7 @@ const _ = {};
 }
 */
 
+
 /** _.map
  * Arguments:
  *   1) A collection
@@ -208,6 +217,7 @@ const _ = {};
  *   _.map([1,2,3,4], function(e){return e * 2}) -> [2,4,6,8]
  */
 
+
 /** _.pluck
  * Arguments:
  *   1) An array of objects
@@ -218,6 +228,7 @@ const _ = {};
  * Examples:
  *   _.pluck([{a: "one"}, {a: "two"}], "a") -> ["one", "two"]
  */
+
 
 /** _.every
  * Arguments:
@@ -239,7 +250,6 @@ const _ = {};
  *   _.every([2,4,6], function(e){return e % 2 === 0}) -> true
  *   _.every([1,2,3], function(e){return e % 2 === 0}) -> false
  */
-
 
 
 /** _.some
@@ -264,7 +274,6 @@ const _ = {};
  */
 
 
-
 /** _.reduce
  * Arguments:
  *   1) An array
@@ -285,7 +294,6 @@ const _ = {};
  */
 
 
-
 /** _.extend
  * Arguments:
  *   1) An Object
@@ -300,7 +308,6 @@ const _ = {};
  *   _.extend(data, {b:"two"}); -> data now equals {a:"one",b:"two"}
  *   _.extend(data, {a:"two"}); -> data now equals {a:"two"}
  */
-
 
 
 ////////////////////////////

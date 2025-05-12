@@ -496,11 +496,11 @@ describe('Underpants', () => {
 
   describe('_.pluck()', () => {
     beforeEach(() => {
-      sinon.spy(_, "map");
-    })
+      sinon.spy(_, 'map');
+    });
     afterEach(() => {
       _.map.restore();
-    })
+    });
     const inputData = [
       { name: 'Ralph', age: 22 },
       { name: 'Jimmy', age: 13 },
@@ -715,57 +715,108 @@ describe('Underpants', () => {
     });
   });
 
-  describe('reduce', function () {
-    var inputArray = [10, 20, 30, 40];
-    it('Should work with an array and a seed', function () {
-      expect(
-        _.reduce(
-          inputArray,
-          function (memo, element, i) {
-            return memo + element + i;
-          },
-          10
-        )
-      ).to.equal(116);
+  describe('_.reduce()', () => {
+    beforeEach(() => {
+      sinon.spy(console, 'log');
     });
-    it('Should work without a seed', function () {
-      expect(
-        _.reduce(inputArray, function (memo, element, i) {
-          return memo * element * (i + 1);
-        })
-      ).to.equal(5760000);
+
+    afterEach(() => {
+      console.log.restore();
     });
-    it('Should work when seed is falsy', function () {
-      expect(
-        _.reduce(
-          inputArray,
-          function (memo, element, i) {
-            return memo * element * (i + 1);
-          },
-          0
-        )
-      ).to.equal(0);
+
+    const inputArray = [10, 20, 30, 40];
+
+    it('should work with an array and a seed', () => {
+      const result = _.reduce(
+        inputArray,
+        (acc, current, i) => {
+          acc += current;
+          return acc;
+        },
+        100
+      );
+      assert.equal(result, 200);
     });
-    it('Should not have side effects', function () {
-      expect(inputArray).to.eql([10, 20, 30, 40]);
+    it('should work without a seed', () => {
+      const result = _.reduce(inputArray, (acc, current, i) => {
+        acc += current;
+        return acc;
+      });
+      assert.equal(result, 100);
+    });
+    it('should work when seed is falsey', () => {
+      const result = _.reduce(
+        inputArray,
+        (acc, current, i) => {
+          acc += current;
+          return acc;
+        },
+        0
+      );
+      assert.equal(result, 100);
+    });
+    it('callback should take in current index as one of its arguments', () => {
+      const logs = [0, 1, 1];
+      const resultOne = _.reduce(
+        [1, 2],
+        (acc, current, i) => {
+          console.log(i);
+          acc += current;
+          return acc;
+        },
+        0
+      );
+      const resultTwo = _.reduce([3, 4], (acc, current, i) => {
+        console.log(i);
+        acc += current;
+        return acc;
+      });
+      if (console.log.args.length > 0) {
+        console.log.args.forEach((e, i) => {
+          assert.equal(e[0], logs[i]);
+        });
+      } else {
+        assert.equal(console.log.args.length > 0, true);
+      }
+    });
+    it('should not have side effects', () => {
+      assert.deepEqual(inputArray, [10, 20, 30, 40]);
     });
   });
 
-  describe('extend', function () {
-    it('Should extend an object.', function () {
-      var inputData = { a: 'one', b: 'two' };
+  describe('_.extend()', () => {
+    it('should extend an object', () => {
+      const inputData = { a: 'one', b: 'two' };
       _.extend(inputData, { c: 'three', d: 'four' });
-      expect(inputData).to.eql({ a: 'one', b: 'two', c: 'three', d: 'four' });
+      assert.deepEqual(inputData, {
+        a: 'one',
+        b: 'two',
+        c: 'three',
+        d: 'four',
+      });
     });
-    it('Should overwrite existing properties', function () {
-      var inputData = { a: 'one', b: 'two' };
+    it('should overwrite existing properties', () => {
+      const inputData = { a: 'one', b: 'two' };
       _.extend(inputData, { a: 'three', d: 'four' });
-      expect(inputData).to.eql({ a: 'three', b: 'two', d: 'four' });
+      assert.deepEqual(inputData, { a: 'three', b: 'two', d: 'four' });
     });
-    it('Should handle any number of arguments.', function () {
-      var inputData = { a: 'one', b: 'two' };
-      _.extend(inputData, { a: 'three', c: 'four' }, { d: 'five', c: 'six' });
-      expect(inputData).to.eql({ a: 'three', b: 'two', c: 'six', d: 'five' });
+    it('should handle any number of arguments', () => {
+      const inputData = { a: 'one', b: 'two' };
+      _.extend(
+        inputData,
+        { c: 'three' },
+        { d: 'four' },
+        { e: 'five' },
+        { f: 'six' }
+      );
+      assert.deepEqual(inputData, {
+        a: 'one',
+        b: 'two',
+        c: 'three',
+        d: 'four',
+        e: 'five',
+        f: 'six',
+      });
     });
   });
 });

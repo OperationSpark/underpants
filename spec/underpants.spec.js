@@ -55,10 +55,7 @@ describe('underpants library', () => {
       );
     });
     it('should return empty array if the array param is not an an array', () => {
-      assert.deepEqual(
-        _.first({ a: 'b' }, 2),
-        []
-      );
+      assert.deepEqual(_.first({ a: 'b' }, 2), []);
     });
     it('should return the whole array if the number is greater than the length of the array', () => {
       assert.deepEqual(_.first(['a', 'b', 'c'], 5), ['a', 'b', 'c']);
@@ -245,63 +242,63 @@ describe('underpants library', () => {
   });
 
   describe('_.filter()', () => {
-      beforeEach(() => {
-        sinon.spy(console, 'log');
-        sinon.spy(_, "each");
-      });
-  
-      afterEach(() => {
-        console.log.restore();
-        _.each.restore();
-      });
-  
-      const inputData = ['a', 1, 'b', 2, 'c', 4];
-  
-      it('should filter elements in an array', () => {
-        assert.deepEqual(
-          _.filter(inputData, (e, i, a) => {
-            return typeof e === 'string';
-          }),
-          ['a', 'b', 'c']
-        );
-      });
-      it('callback function should take in the current index as one of its arguments', () => {
-        const input = ['a', 'b', 'aa'];
-        const logs = [0, 1, 2];
-        _.filter(input, (e, i, a) => {
-          console.log(i);
-          return e.length === 1;
-        });
-        if (console.log.args.length) {
-          console.log.args.forEach((e, i) => {
-            assert.equal(e[0], logs[i]);
-          });
-        } else {
-          assert.equal(console.log.args.length > 0, true);
-        }
-      });
-      it('callback function should take in the array as one its arguments', () => {
-        const input = ['a', 'b', 'aa'];
-        _.filter(input, (e, i, a) => {
-          console.log(a);
-          return e.length === 1;
-        });
-        if (console.log.args.length) {
-          console.log.args.forEach((e, i) => {
-            assert.deepEqual(e[0], ['a', 'b', 'aa']);
-          });
-        } else {
-          assert.equal(console.log.args.length > 0, true);
-        }
-      });
-      it('should not have side effects', () => {
-        assert.deepEqual(inputData, ['a', 1, 'b', 2, 'c', 4]);
-      });
-      // it('optional - use _.each', () => {
-      //   _.filter([1, 2, 3, 4], (e) => e % 2 === 0);
-      //   expect(_.each.calledOnce).to.be.true;
-      // });
+    beforeEach(() => {
+      sinon.spy(console, 'log');
+      sinon.spy(_, 'each');
     });
+
+    afterEach(() => {
+      console.log.restore();
+      _.each.restore();
+    });
+
+    const inputData = ['a', 1, 'b', 2, 'c', 4];
+
+    it('should filter elements in an array', () => {
+      assert.deepEqual(
+        _.filter(inputData, (e, i, a) => {
+          return typeof e === 'string';
+        }),
+        ['a', 'b', 'c']
+      );
+    });
+    it('callback function should take in the current index as one of its arguments', () => {
+      const input = ['a', 'b', 'aa'];
+      const logs = [0, 1, 2];
+      _.filter(input, (e, i, a) => {
+        console.log(i);
+        return e.length === 1;
+      });
+      if (console.log.args.length) {
+        console.log.args.forEach((e, i) => {
+          assert.equal(e[0], logs[i]);
+        });
+      } else {
+        assert.equal(console.log.args.length > 0, true);
+      }
+    });
+    it('callback function should take in the array as one its arguments', () => {
+      const input = ['a', 'b', 'aa'];
+      _.filter(input, (e, i, a) => {
+        console.log(a);
+        return e.length === 1;
+      });
+      if (console.log.args.length) {
+        console.log.args.forEach((e, i) => {
+          assert.deepEqual(e[0], ['a', 'b', 'aa']);
+        });
+      } else {
+        assert.equal(console.log.args.length > 0, true);
+      }
+    });
+    it('should not have side effects', () => {
+      assert.deepEqual(inputData, ['a', 1, 'b', 2, 'c', 4]);
+    });
+    // it('optional - use _.each', () => {
+    //   _.filter([1, 2, 3, 4], (e) => e % 2 === 0);
+    //   expect(_.each.calledOnce).to.be.true;
+    // });
+  });
 
   describe('_.reject()', () => {
     beforeEach(() => {
@@ -498,6 +495,12 @@ describe('underpants library', () => {
   });
 
   describe('_.pluck()', () => {
+    beforeEach(() => {
+      sinon.spy(_, "map");
+    })
+    afterEach(() => {
+      _.map.restore();
+    })
     const inputData = [
       { name: 'Ralph', age: 22 },
       { name: 'Jimmy', age: 13 },
@@ -509,8 +512,8 @@ describe('underpants library', () => {
       assert.deepEqual(result, correct);
     });
     it('should invoke the _.map() method', () => {
-      const func = _.pluck.toString();
-      assert.equal(func.includes('.map('), true);
+      _.pluck(inputData, 'age');
+      expect(_.map.calledOnce).to.be.true;
     });
     it('should not have side effects', () => {
       _.pluck(inputData, 'name');
@@ -817,5 +820,4 @@ describe('underpants library', () => {
       });
     });
   });
-
 });

@@ -494,18 +494,30 @@ describe('Underpants', () => {
     });
   });
 
-  describe('pluck', function () {
-    var inputData = [
+  describe('_.pluck()', () => {
+    beforeEach(() => {
+      sinon.spy(_, "map");
+    })
+    afterEach(() => {
+      _.map.restore();
+    })
+    const inputData = [
       { name: 'Ralph', age: 22 },
       { name: 'Jimmy', age: 13 },
       { name: 'Carla', age: 20 },
     ];
-    it('Should pluck properties out of a list of objects.', function () {
-      expect(_.pluck(inputData, 'name')).to.eql(['Ralph', 'Jimmy', 'Carla']);
+    it('should pluck properties from a list of objects', () => {
+      const result = _.pluck(inputData, 'name');
+      const correct = ['Ralph', 'Jimmy', 'Carla'];
+      assert.deepEqual(result, correct);
     });
-
-    it('Should not have side effects.', function () {
-      expect(inputData).to.eql([
+    it('should invoke the _.map() method', () => {
+      _.pluck(inputData, 'age');
+      expect(_.map.calledOnce).to.be.true;
+    });
+    it('should not have side effects', () => {
+      _.pluck(inputData, 'name');
+      assert.deepEqual(inputData, [
         { name: 'Ralph', age: 22 },
         { name: 'Jimmy', age: 13 },
         { name: 'Carla', age: 20 },
@@ -513,83 +525,193 @@ describe('Underpants', () => {
     });
   });
 
-  describe('every', function () {
-    var inputData = [2, 4, 6, 7, 8];
-    var inputDataTruthy = [1, [], true, 'a'];
-    var inputDataFalsy = ['', 0, false, null];
-    var inputObject = { a: 'one', b: 'two', c: 'three' };
-    it('Should return true when all iterations are true', function () {
-      expect(
-        _.every(inputData, function (v) {
-          return v % 2 === 0 || v === 7;
-        })
-      ).to.equal(true);
+  describe('_.every()', () => {
+    beforeEach(() => {
+      sinon.spy(console, 'log');
     });
-    it('Should return false when not all iterations are true', function () {
-      expect(
-        _.every(inputData, function (v) {
-          return v % 2 === 0;
-        })
-      ).to.equal(false);
+
+    afterEach(() => {
+      console.log.restore();
     });
-    it('Should handle objects', function () {
-      expect(
-        _.every(inputObject, function (v, k, o) {
-          return (
-            ['aone3', 'btwo3', 'cthree3'].indexOf(
-              k + v + Object.keys(o).length
-            ) !== -1
-          );
-        })
-      ).to.equal(true);
+
+    const inputData = [2, 4, 6, 7, 8];
+    const inputObject = { a: 'one', b: 'two', c: 'three' };
+
+    it('should return true when all iterations are true', () => {
+      const resultOne = _.every(inputData, (e) => e > 0);
+      const resultTwo = _.every(inputObject, (e) => typeof e === 'string');
+      assert.equal(resultOne, true);
+      assert.equal(resultTwo, true);
     });
-    it('Should return true for truthy results when no function is passed in.', function () {
-      expect(_.every(inputDataTruthy)).to.equal(true);
+    it('should return false when not all iterations are true', () => {
+      const resultOne = _.every(inputData, (e) => e % 2 === 0);
+      const resultTwo = _.every(inputObject, (e) => e.length === 3);
+      assert.equal(resultOne, false);
+      assert.equal(resultTwo, false);
     });
-    it('Should return false for falsy results when no function is passed in.', function () {
-      expect(_.every(inputDataFalsy)).to.equal(false);
+    it('should return true for truthy results when no function is passed in', () => {
+      assert.equal(_.every(['a', 'b']), true);
+      assert.equal(_.every({ a: 1, b: 2 }), true);
     });
-    it('Should not have side effects.', function () {
-      expect(inputData).to.eql([2, 4, 6, 7, 8]);
+    it('should return false for falsey results when no function is passed in', () => {
+      assert.equal(_.every(['a', 'b', null]), false);
+      assert.equal(_.every({ a: 1, b: 2, c: null }), false);
+    });
+    it('callback should take in the current index as an argument if collection is an array', () => {
+      const input = ['a', 'b'];
+      const logs = [0, 1];
+      _.every(input, (e, i, a) => {
+        console.log(i);
+        return typeof e === 'string';
+      });
+      if (console.log.args.length) {
+        console.log.args.forEach((e, i) => {
+          assert.equal(e[0], logs[i]);
+        });
+      } else {
+        assert.equal(console.log.args.length > 0, true);
+      }
+    });
+    it('should take in the array as an argument if collection is an array', () => {
+      const input = ['a', 'b'];
+      _.every(input, (e, i, a) => {
+        console.log(a);
+        return typeof e === 'string';
+      });
+      if (console.log.args.length) {
+        console.log.args.forEach((e, i) => {
+          assert.deepEqual(e[0], ['a', 'b']);
+        });
+      } else {
+        assert.equal(console.log.args.length > 0, true);
+      }
+    });
+    it('should take in the current value as an argument if collection is an object', () => {
+      const input = { a: 1, b: 2 };
+      const logs = ['a', 'b'];
+      _.every(input, (v, k, o) => {
+        console.log(k);
+        return typeof v === 'number';
+      });
+      if (console.log.args.length) {
+        console.log.args.forEach((e, i) => {
+          assert.equal(e[0], logs[i]);
+        });
+      } else {
+        assert.equal(console.log.args.length > 0, true);
+      }
+    });
+    it('should take in the object as an argument if collection is an object', () => {
+      const input = { a: 1, b: 2 };
+      _.every(input, (v, k, o) => {
+        console.log(o);
+        return typeof v === 'number';
+      });
+      if (console.log.args.length) {
+        console.log.args.forEach((e, i) => {
+          assert.deepEqual(e[0], { a: 1, b: 2 });
+        });
+      } else {
+        assert.equal(console.log.args.length > 0, true);
+      }
+    });
+    it('should not have side effects', () => {
+      assert.deepEqual(inputData, [2, 4, 6, 7, 8]);
     });
   });
 
-  describe('some', function () {
-    var inputData = [2, 4, 6, 7, 8];
-    var inputDataTruthy = [1, [], true, 'a'];
-    var inputDataFalsy = ['', 0, false, null];
-    var inputObject = { a: 'one', b: 'two', c: 'three' };
-    it('Should return true when at least one iteration is true', function () {
-      expect(
-        _.some(inputData, function (v) {
-          return v === 7;
-        })
-      ).to.equal(true);
+  describe('_.some()', () => {
+    beforeEach(() => {
+      sinon.spy(console, 'log');
     });
-    it('Should return false when no iterations are true', function () {
-      expect(
-        _.some(inputData, function (v) {
-          return v > 10;
-        })
-      ).to.equal(false);
+
+    afterEach(() => {
+      console.log.restore();
     });
-    it('Should handle objects', function () {
-      expect(
-        _.some(inputObject, function (v, k, o) {
-          return (
-            ['aone3', 'btwo3'].indexOf(k + v + Object.keys(o).length) !== -1
-          );
-        })
-      ).to.equal(true);
+
+    const inputArray = [2, 4, 6, 7, 8];
+    const inputObject = { a: 'one', b: 'two', c: 'three' };
+
+    it('should handle objects', () => {
+      const result = _.some(inputObject, (e) => e.length > 3);
+      assert.equal(typeof result, 'boolean');
     });
-    it('Should return true for truthy results when no function is passed in.', function () {
-      expect(_.some(inputDataTruthy)).to.equal(true);
+    it('should return true when at least one iteration is true', () => {
+      const resultOne = _.some(inputArray, (e) => e % 2 !== 0);
+      const resultTwo = _.some(inputObject, (e) => e.length > 3);
+      assert.equal(resultOne, true);
+      assert.equal(resultTwo, true);
     });
-    it('Should return false for falsy results when no function is passed in.', function () {
-      expect(_.some(inputDataFalsy)).to.equal(false);
+    it('should return false when no iterations are true', () => {
+      const resultOne = _.some(inputArray, (e) => e > 10);
+      const resultTwo = _.some(inputObject, (e) => e.length > 5);
+      assert.equal(resultOne, false);
+      assert.equal(resultTwo, false);
     });
-    it('Should not have side effects.', function () {
-      expect(inputData).to.eql([2, 4, 6, 7, 8]);
+    it('should return true for truthy results when no function is passed in', () => {
+      assert.equal(_.some(inputArray), true);
+      assert.equal(_.some(inputObject), true);
+    });
+    it('should return false for falsey results when no function is passed in', () => {
+      assert.equal(_.some([undefined, null]), false);
+      assert.equal(_.some({ a: undefined, b: null }), false);
+    });
+    it('callback should take in current index as one of its arguments if collection is an array', () => {
+      const logs = [0, 1, 2];
+      _.some([1, 2, 3], (e, i, a) => {
+        console.log(i);
+        return e > 0;
+      });
+      if (console.log.args.length) {
+        console.log.args.forEach((e, i) => {
+          assert.equal(e[0], logs[i]);
+        });
+      } else {
+        assert.equal(console.log.args.length > 0, true);
+      }
+    });
+    it('callback should take in array as one of its arguments if collection is an array', () => {
+      _.some([1, 2, 3], (e, i, a) => {
+        console.log(a);
+        return e > 0;
+      });
+      if (console.log.args.length) {
+        console.log.args.forEach((e, i) => {
+          assert.deepEqual(e[0], [1, 2, 3]);
+        });
+      } else {
+        assert.equal(console.log.args.length > 0, true);
+      }
+    });
+    it('callback should take in current key as one of its arguments if collection is an object', () => {
+      const logs = ['a', 'b'];
+      _.some({ a: 1, b: 2 }, (v, k, o) => {
+        console.log(k);
+        return v > 0;
+      });
+      if (console.log.args.length) {
+        console.log.args.forEach((e, i) => {
+          assert.equal(e[0], logs[i]);
+        });
+      } else {
+        assert.equal(console.log.args.length > 0, true);
+      }
+    });
+    it('callback should take in object as one of its arguments if collection is an object', () => {
+      _.some({ a: 1, b: 2 }, (v, k, o) => {
+        console.log(o);
+        return v > 0;
+      });
+      if (console.log.args.length) {
+        console.log.args.forEach((e, i) => {
+          assert.deepEqual(e[0], { a: 1, b: 2 });
+        });
+      } else {
+        assert.equal(console.log.args.length > 0, true);
+      }
+    });
+    it('should not have side effects', () => {
+      assert.deepEqual(inputArray, [2, 4, 6, 7, 8]);
     });
   });
 

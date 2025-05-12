@@ -8,7 +8,7 @@ describe('underpants library', () => {
     });
   });
 
-  describe('_.typeof()', () => {
+  describe('_.typeOff()', () => {
     it('should handle simple datatypes', () => {
       assert.strictEqual(_.typeOf('a'), 'string');
       assert.strictEqual(_.typeOf(10), 'number');

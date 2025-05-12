@@ -14,7 +14,7 @@ describe('Underpants', () => {
     });
   });
 
-  describe('_.typeof()', () => {
+  describe('_.typeOf()', () => {
     it('should handle simple datatypes', () => {
       assert.strictEqual(_.typeOf('a'), 'string');
       assert.strictEqual(_.typeOf(10), 'number');
@@ -75,8 +75,6 @@ describe('Underpants', () => {
       assert.deepEqual(_.last(['a', 'b', 'c'], 2), ['b', 'c']);
     });
     it('should return the last element if no numerical argument is given', () => {
-      console.log('hit this test');
-      console.log(_.last);
       assert.equal(_.last(['a', 'b', 'c']), 'c');
     });
     it('should return empty array if numerical argument is not a positive number', () => {
@@ -106,42 +104,112 @@ describe('Underpants', () => {
     });
   });
 
-  describe('contains', function () {
-    var inputData = [1, '3', 4, 5, 'a', '4', 'b'];
-    it('Should return true if a list contains an element.', function () {
-      expect(_.contains(inputData, 'a')).to.eql(true);
+  describe('_.contains()', () => {
+    const inputData = [1, '3', 4, 5, 'a', '4', 'b'];
+    it('should return true if a list contains an element', () => {
+      assert.strictEqual(_.contains(inputData, 'a'), true);
     });
-    it("Should return false if a list doesn't contain an element.", function () {
-      expect(_.contains(inputData, 'c')).to.eql(false);
+    it("should return false if the list doesn't contain an element", () => {
+      assert.strictEqual(_.contains(inputData, 'c'), false);
     });
-    it('Should not convert types when checking.', function () {
-      expect(_.contains(inputData, 3)).to.eql(false);
+    it('should not convert types when checking', () => {
+      assert.strictEqual(_.contains(inputData, 3), false);
     });
-    it('Should not have side effects.', function () {
-      expect(inputData).to.eql([1, '3', 4, 5, 'a', '4', 'b']);
+    it('should not have side effects', () => {
+      assert.deepEqual(inputData, [1, '3', 4, 5, 'a', '4', 'b']);
     });
   });
 
-  describe('each', function () {
-    it('Should handle arrays.', function () {
-      var inputArray = [1, 2, 3, 4, 5];
+  describe('_.each()', () => {
+    beforeEach(() => {
+      sinon.spy(console, 'log');
+    });
+
+    afterEach(() => {
+      console.log.restore();
+    });
+    it('should handle arrays', () => {
+      const inputArray = [1, 2, 3, 4, 5];
+      const output = [];
       _.each(inputArray, function (e, i, a) {
-        inputArray[i] = e * a.length;
+        output.push(e * 10);
       });
-      expect(inputArray).to.eql([5, 10, 15, 20, 25]);
+      assert.deepEqual(output, [10, 20, 30, 40, 50]);
     });
-    it('Should handle Objects.', function () {
-      var inputObject = { a: '1', b: '2', c: '3', d: '4' };
+    it('should handle objects', () => {
+      const inputObject = { a: '1', b: '2', c: '3', d: '4' };
+      const output = [];
       _.each(inputObject, function (v, k, o) {
-        inputObject[v] = k + Object.keys(o).length;
-        delete inputObject[k];
+        output.push(v + v);
       });
-      expect(inputObject).to.eql({ 1: 'a4', 2: 'b4', 3: 'c4', 4: 'd4' });
+      assert.deepEqual(output, ['11', '22', '33', '44']);
+    });
+    it('callback should take in current index as an argument if collection is an array', () => {
+      const inputArray = ['a', 'b', 'c'];
+      const logs = [0, 1, 2];
+      const output = [];
+      _.each(inputArray, function (e, i, a) {
+        console.log(i);
+        output.push(e.toUpperCase());
+      });
+      if (console.log.args.length) {
+        console.log.args.forEach((e, i) => {
+          console.dir('hit this');
+          assert.equal(e[0], logs[i]);
+        });
+      } else {
+        assert.equal(console.log.args.length > 0, true);
+      }
+    });
+    it('callback should take in array as an argument if collection is an array', () => {
+      const inputArray = ['a', 'b', 'c'];
+      const output = [];
+      _.each(inputArray, function (e, i, a) {
+        console.log(a);
+        output.push(e.toUpperCase());
+      });
+      if (console.log.args.length) {
+        console.log.args.forEach((e, i) => {
+          assert.deepEqual(e[0], ['a', 'b', 'c']);
+        });
+      } else {
+        assert.equal(console.log.args.length > 0, true);
+      }
+    });
+    it('callback should take in current key as an argument if collection is an object', () => {
+      const inputObject = { a: 'one', b: 'two' };
+      const logs = ['a', 'b'];
+      _.each(inputObject, (v, k, o) => {
+        console.log(k);
+        inputObject[k] = inputObject[k].toUpperCase();
+      });
+      if (console.log.args.length) {
+        console.log.args.forEach((e, i) => {
+          assert.deepEqual(e[0], logs[i]);
+        });
+      } else {
+        assert.equal(console.log.args.length > 0, true);
+      }
+    });
+    it('callback should take in object as an argument if collection is an object', () => {
+      const inputObject = { a: 'one', b: 'two' };
+      const output = [];
+      _.each(inputObject, (v, k, o) => {
+        console.log(o);
+        output.push(inputObject[k].toUpperCase());
+      });
+      if (console.log.args.length) {
+        console.log.args.forEach((e, i) => {
+          assert.deepEqual(e[0], { a: 'one', b: 'two' });
+        });
+      } else {
+        assert.equal(console.log.args.length > 0, true);
+      }
     });
   });
 
-  describe('unique', function () {
-    var inputData = [
+  describe('_.unique()', () => {
+    const inputData = [
       'a',
       1,
       1,
@@ -155,11 +223,15 @@ describe('Underpants', () => {
       false,
       null,
     ];
-    it('Should return an array with no duplicates.', function () {
-      expect(_.unique(inputData)).to.eql(['a', 1, 'c', false, 'b', 5, null]);
+    it('should return an array with no duplicates', () => {
+      assert.deepEqual(_.unique(inputData), ['a', 1, 'c', false, 'b', 5, null]);
     });
-    it('Should not have side effects.', function () {
-      expect(inputData).to.eql([
+    it('should invoke _.indexOf() method', () => {
+      const func = _.unique.toString();
+      assert.equal(func.includes('_.indexOf('), true);
+    });
+    it('should not have side effects', () => {
+      assert.deepEqual(inputData, [
         'a',
         1,
         1,

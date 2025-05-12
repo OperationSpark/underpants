@@ -154,7 +154,6 @@ describe('Underpants', () => {
       });
       if (console.log.args.length) {
         console.log.args.forEach((e, i) => {
-          console.dir('hit this');
           assert.equal(e[0], logs[i]);
         });
       } else {
@@ -248,37 +247,61 @@ describe('Underpants', () => {
     });
   });
 
-  describe('filter', function () {
-    beforeEach(function () {
-      sinon.spy(_, 'each');
-      // const each = sinon.spy(_.each);
-      sinon.spy(_, 'filter');
+  describe('_.filter()', () => {
+    beforeEach(() => {
+      sinon.spy(console, 'log');
+      sinon.spy(_, "each");
     });
 
-    afterEach(function () {
+    afterEach(() => {
+      console.log.restore();
       _.each.restore();
-      _.filter.restore();
     });
 
-    var inputData = ['a', 1, 'b', 2, 'c', 4];
-    it('Should filter elements in an array.', function () {
-      expect(
-        _.filter(inputData, function (e, i, a) {
-          return typeof e === 'string' && i < a.length / 2;
-        })
-      ).to.eql(['a', 'b']);
+    const inputData = ['a', 1, 'b', 2, 'c', 4];
+
+    it('should filter elements in an array', () => {
+      assert.deepEqual(
+        _.filter(inputData, (e, i, a) => {
+          return typeof e === 'string';
+        }),
+        ['a', 'b', 'c']
+      );
     });
-    it('Should not have side effects.', function () {
-      expect(inputData).to.eql(['a', 1, 'b', 2, 'c', 4]);
+    it('callback function should take in the current index as one of its arguments', () => {
+      const input = ['a', 'b', 'aa'];
+      const logs = [0, 1, 2];
+      _.filter(input, (e, i, a) => {
+        console.log(i);
+        return e.length === 1;
+      });
+      if (console.log.args.length) {
+        console.log.args.forEach((e, i) => {
+          assert.equal(e[0], logs[i]);
+        });
+      } else {
+        assert.equal(console.log.args.length > 0, true);
+      }
     });
-    // TODO: Incorporate test to see if each is used
-    // xit('should use the _.each function', function() {
-    //   var isEven = function(num) { return num % 2 === 0; };
-    //   expect(_.each.calledOnce).to.be.false;
-    //
-    //   _.filter([1, 2, 3, 4, 5, 6], isEven);
-    //
-    //   console.log('each', _.each);
+    it('callback function should take in the array as one its arguments', () => {
+      const input = ['a', 'b', 'aa'];
+      _.filter(input, (e, i, a) => {
+        console.log(a);
+        return e.length === 1;
+      });
+      if (console.log.args.length) {
+        console.log.args.forEach((e, i) => {
+          assert.deepEqual(e[0], ['a', 'b', 'aa']);
+        });
+      } else {
+        assert.equal(console.log.args.length > 0, true);
+      }
+    });
+    it('should not have side effects', () => {
+      assert.deepEqual(inputData, ['a', 1, 'b', 2, 'c', 4]);
+    });
+    // it('optional - use _.each', () => {
+    //   _.filter([1, 2, 3, 4], (e) => e % 2 === 0);
     //   expect(_.each.calledOnce).to.be.true;
     // });
   });

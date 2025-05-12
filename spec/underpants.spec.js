@@ -57,8 +57,7 @@ describe('underpants library', () => {
     it('should return empty array if the array param is not an an array', () => {
       assert.deepEqual(
         _.first({ a: 'b' }, 2),
-        [],
-        'Should return empty array if the array param is not an array.'
+        []
       );
     });
     it('should return the whole array if the number is greater than the length of the array', () => {
@@ -71,7 +70,6 @@ describe('underpants library', () => {
       assert.deepEqual(_.last(['a', 'b', 'c'], 2), ['b', 'c']);
     });
     it('should return the last element if no numerical argument is given', () => {
-      console.log('hit this test');
       console.log(_.last);
       assert.equal(_.last(['a', 'b', 'c']), 'c');
     });

@@ -7,45 +7,44 @@ const
 
 describe('Underpants', function() {
 
-  describe('identity', function() {
-    it('Should handle numbers.', function() {
-      expect(_.identity(14)).to.equal(14);
-    });
-    it('Should handle objects.', function() {
-      expect(_.identity({a: 'one'})).to.eql({a: 'one'});
-    });
-    it('Should handle strings.', function() {
-      expect(_.identity('Hello there!')).to.eql('Hello there!');
-    });
-    it('Should handle arrays.', function() {
-      expect(_.identity([1,2,3])).to.eql([1,2,3]);
+  describe('_.identity()', () => {
+    it('should return input value unchanged', () => {
+      assert.strictEqual(_.identity(14), 14);
+      assert.deepEqual(_.identity({ a: 'one' }), { a: 'one' });
+      assert.strictEqual(_.identity('hello there'), 'hello there');
+      assert.deepEqual(_.identity([1, 2, 3]), [1, 2, 3]);
     });
   });
 
-  describe('typeOf', function() {
-    it("Should handle strings", function() {
-      expect(_.typeOf("a")).to.equal("string");
+  describe('_.typeof()', () => {
+    it('should handle simple datatypes', () => {
+      assert.strictEqual(_.typeOf('a'), 'string');
+      assert.strictEqual(_.typeOf(10), 'number');
+      assert.strictEqual(_.typeOf(false), 'boolean');
+      assert.strictEqual(_.typeOf(undefined), 'undefined');
+      assert.strictEqual(
+        _.typeOf(function () {}),
+        'function'
+      );
     });
-    it("Should handle numbers", function() {
-      expect(_.typeOf(10)).to.equal("number");
+    it('should return `object` for objects intended as as collections', () => {
+      assert.strictEqual(
+        _.typeOf({ a: 'one' }),
+        'object',
+        'Should handle objects.'
+      );
     });
-    it("Should handle arrays", function() {
-      expect(_.typeOf([1,3])).to.equal("array");
+    it('should return `array` for array inputs', () => {
+      assert.strictEqual(_.typeOf([1, 3]), 'array');
     });
-    it("Should handle objects", function() {
-      expect(_.typeOf({a: "one"})).to.equal("object");
+    it('should return `null` for null inputs', () => {
+      assert.strictEqual(_.typeOf(null), 'null');
     });
-    it("Should handle booleans", function() {
-      expect(_.typeOf(false)).to.equal("boolean");
-    });
-    it("Should handle undefined", function() {
-      expect(_.typeOf(undefined)).to.equal("undefined");
-    });
-    it("Should handle null", function() {
-      expect(_.typeOf(null)).to.equal("null");
-    });
-    it("Should handle functions", function() {
-      expect(_.typeOf(function(){})).to.equal("function");
+    it('should return `function` for function inputs', () => {
+      assert.strictEqual(
+        _.typeOf(function () {}),
+        'function'
+      );
     });
   });
 

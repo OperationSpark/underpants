@@ -261,38 +261,7 @@ const _ = {};
  *   _.some([1,2,3], function(e){return e % 2 === 0}) -> true
  */
 
-_.some = (coll, func) => {
-  if (Array.isArray(coll)){
-    if (func){
-      for (let i = 0; i < coll.length; i++){
-        if (func(coll[i], i, coll)){
-          return true;
-        }
-      }
-    } else {
-      for (let i = 0; i < coll.length; i++){
-        if (coll[i]){
-          return true;
-        }
-      }
-    }
-  } else {
-    if (func){
-      for (let key in coll){
-        if (func(coll[key], key, coll)){
-          return true;
-        }
-      }
-    } else {
-      for (let key in coll){
-        if (coll[key]){
-          return true;
-        }
-      }
-    }
-  }
-  return false;
-}
+
 
 /** _.reduce
  * Arguments:
@@ -313,6 +282,8 @@ _.some = (coll, func) => {
  *   _.reduce([1,2,3], function(previousSum, currentValue, currentIndex){ return previousSum + currentValue }, 0) -> 6
  */
 
+
+
 /** _.extend
  * Arguments:
  *   1) An Object
@@ -327,6 +298,8 @@ _.some = (coll, func) => {
  *   _.extend(data, {b:"two"}); -> data now equals {a:"one",b:"two"}
  *   _.extend(data, {a:"two"}); -> data now equals {a:"two"}
  */
+
+
 
 ////////////////////////////
 // DON'T REMOVE THIS CODE //

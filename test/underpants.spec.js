@@ -54,16 +54,10 @@ describe('Underpants', () => {
       assert.equal(_.first(['a', 'b', 'c']), 'a');
     });
     it('should return empty array if numerical argument is not a positive number', () => {
-      assert.deepEqual(
-        _.first(['a', 'b', 'c'], -1),
-        [],
-      );
+      assert.deepEqual(_.first(['a', 'b', 'c'], -1), []);
     });
     it('should return empty array if the array param is not an an array', () => {
-      assert.deepEqual(
-        _.first({ a: 'b' }, 2),
-        []
-      );
+      assert.deepEqual(_.first({ a: 'b' }, 2), []);
     });
     it('should return the whole array if the number is greater than the length of the array', () => {
       assert.deepEqual(_.first(['a', 'b', 'c'], 5), ['a', 'b', 'c']);
@@ -250,7 +244,7 @@ describe('Underpants', () => {
   describe('_.filter()', () => {
     beforeEach(() => {
       sinon.spy(console, 'log');
-      sinon.spy(_, "each");
+      sinon.spy(_, 'each');
     });
 
     afterEach(() => {
@@ -306,72 +300,198 @@ describe('Underpants', () => {
     // });
   });
 
-  describe('reject', function () {
-    var inputData = ['a', 1, 'b', 2, 'c', 4];
-    it('Should reject elements in an array.', function () {
-      expect(
-        _.reject(inputData, function (e, i, a) {
-          return typeof e === 'string' || i < a.length / 2;
-        })
-      ).to.eql([2, 4]);
+  describe('_.reject()', () => {
+    beforeEach(() => {
+      sinon.spy(console, 'log');
     });
-    it('Should not have side effects.', function () {
-      expect(inputData).to.eql(['a', 1, 'b', 2, 'c', 4]);
+
+    afterEach(() => {
+      console.log.restore();
     });
-    // TODO: Incorporate test to see if filter is used
+
+    const inputData = ['a', 1, 'b', 2, 'c', 4];
+
+    it('should return an array of items rejected by the callback function', () => {
+      assert.deepEqual(
+        _.reject(inputData, (e) => {
+          return typeof e === 'string';
+        }),
+        [1, 2, 4]
+      );
+    });
+    it('callback function should take in the current index as an argument', () => {
+      const input = ['a', 'b', 'aa'];
+      const logs = [0, 1, 2];
+      _.reject(input, (e, i, a) => {
+        console.log(i);
+        return e.length === 2;
+      });
+      if (console.log.args.length) {
+        console.log.args.forEach((e, i) => {
+          assert.equal(e[0], logs[i]);
+        });
+      } else {
+        assert.equal(console.log.args.length > 0, true);
+      }
+    });
+    it('callback function should take in the array as an argument', () => {
+      const input = ['a', 'b', 'aa'];
+      _.reject(input, (e, i, a) => {
+        console.log(a);
+        return e.length === 2;
+      });
+      if (console.log.args.length) {
+        console.log.args.forEach((e, i) => {
+          assert.deepEqual(e[0], ['a', 'b', 'aa']);
+        });
+      } else {
+        assert.equal(console.log.args.length > 0, true);
+      }
+    });
+    it('should not have side effects', () => {
+      assert.deepEqual(inputData, ['a', 1, 'b', 2, 'c', 4]);
+    });
   });
 
-  describe('partition', function () {
-    var inputData = ['a', 1, 'b', 2, 'c', 4];
-    it('Should reject elements in an array.', function () {
-      expect(_.partition(inputData, (e, i, a) => typeof e === 'string')).to.eql(
+  describe('_.partition()', () => {
+    beforeEach(() => {
+      sinon.spy(console, 'log');
+    });
+
+    afterEach(() => {
+      console.log.restore();
+    });
+
+    const inputData = ['a', 1, 'b', 2, 'c', 4];
+
+    it('should create a correctly partitioned array of subarrays', () => {
+      assert.deepEqual(
+        _.partition(inputData, (e) => {
+          return typeof e === 'string';
+        }),
         [
           ['a', 'b', 'c'],
           [1, 2, 4],
         ]
       );
     });
-    it('Should not have side effects.', function () {
-      expect(inputData).to.eql(['a', 1, 'b', 2, 'c', 4]);
+    it('callback function should take in the current index as an argument', () => {
+      const input = ['a', 1];
+      const logs = [0, 1];
+      _.partition(input, (e, i, a) => {
+        console.log(i);
+        return typeof e === 'string';
+      });
+      if (console.log.args.length) {
+        console.log.args.forEach((e, i) => {
+          assert.equal(e[0], logs[i]);
+        });
+      } else {
+        assert.equal(console.log.args.length > 0, true);
+      }
     });
-    // TODO: Add tests to check if filter and reject are used
-    // xit('should use the _.filter function', function() {
-    //   expect(_.filter.called).to.be.true;
-    // });
-    //
-    // xit('should use the _.reject function', function() {
-    //   expect(_.reject.called).to.be.true;
-    // });
+    it('callback function should take in the array as an argument', () => {
+      const input = ['a', 1];
+      const logs = [
+        ['a', 1],
+        ['a', 1],
+      ];
+      _.partition(input, (e, i, a) => {
+        console.log(a);
+        return typeof e === 'string';
+      });
+      if (console.log.args.length) {
+        console.log.args.forEach((e, i) => {
+          assert.deepEqual(e[0], logs[i]);
+        });
+      } else {
+        assert.equal(console.log.args.length > 0, true);
+      }
+    });
+
+    it('should not have side effects', () => {
+      assert.deepEqual(inputData, ['a', 1, 'b', 2, 'c', 4]);
+    });
   });
 
-  describe('map', function () {
-    var inputArray = ['a', 'b', 'c', 'd'];
-    var inputObject = { a: 1, b: 2, c: 3, d: 4 };
-    it('Should map through arrays.', function () {
-      expect(
-        _.map(inputArray, function (e, i, a) {
-          return e + i * a.length;
-        })
-      ).to.eql(['a0', 'b4', 'c8', 'd12']);
+  describe('_.map', () => {
+    beforeEach(() => {
+      sinon.spy(console, 'log');
     });
-    it('Should map through Objects.', function () {
-      expect(
-        _.map(inputObject, function (v, k, o) {
-          return k + v * Object.keys(o).length;
-        })
-      ).to.eql(['a4', 'b8', 'c12', 'd16']);
+
+    afterEach(() => {
+      console.log.restore();
     });
-    it('Should not have side effects.', function () {
-      expect([inputArray, inputObject]).to.eql([
-        ['a', 'b', 'c', 'd'],
-        { a: 1, b: 2, c: 3, d: 4 },
-      ]);
+
+    const inputArray = ['a', 'b', 'c', 'd'];
+    const inputObject = { a: 1, b: 2, c: 3, d: 4 };
+
+    it('should correctly map an array', () => {
+      const result = _.map(inputArray, (e) => e.toUpperCase());
+      assert.deepEqual(result, ['A', 'B', 'C', 'D']);
     });
-    // TODO: add test to see if each is used
-    // xit('should use the _.each function', function() {
-    //   console.log(_.map.toString());
-    //   expect(_.map.toString()).to.contain('_.each');
-    // });
+    it('should correctly map an object', () => {
+      const result = _.map(inputObject, (e) => e * 10);
+      assert.deepEqual(result, [10, 20, 30, 40]);
+    });
+    it('callback should take in the current index as an argument if collection is an array', () => {
+      const logs = [0, 1, 2, 3];
+      _.map(inputArray, (e, i, a) => {
+        console.log(i);
+        return e.toUpperCase();
+      });
+      if (console.log.args.length) {
+        console.log.args.forEach((e, i) => {
+          assert.equal(e[0], logs[i]);
+        });
+      } else {
+        assert.equal(console.log.args.length > 0, true);
+      }
+    });
+    it('callback should take in the array as argument if collection is an array', () => {
+      _.map(inputArray, (e, i, a) => {
+        console.log(a);
+        return e.toUpperCase();
+      });
+      if (console.log.args.length) {
+        console.log.args.forEach((e, i) => {
+          assert.deepEqual(e[0], ['a', 'b', 'c', 'd']);
+        });
+      } else {
+        assert.equal(console.log.args.length > 0, true);
+      }
+    });
+    it('callback should take in the current key as an argument if collection is an argument', () => {
+      const logs = ['a', 'b', 'c', 'd'];
+      _.map(inputObject, (v, k, o) => {
+        console.log(k);
+        return v * 10;
+      });
+      if (console.log.args.length) {
+        console.log.args.forEach((e, i) => {
+          assert.equal(e[0], logs[i]);
+        });
+      } else {
+        assert.equal(console.log.args.length > 0, true);
+      }
+    });
+    it('callback should take in the object as an argument if collection is an argument', () => {
+      _.map(inputObject, (v, k, o) => {
+        console.log(o);
+        return v * 10;
+      });
+      if (console.log.args.length) {
+        console.log.args.forEach((e, i) => {
+          assert.deepEqual(e[0], inputObject);
+        });
+      } else {
+        assert.equal(console.log.args.length > 0, true);
+      }
+    });
+    it('should not have side effects', () => {
+      assert.deepEqual(inputArray, ['a', 'b', 'c', 'd']);
+      assert.deepEqual(inputObject, { a: 1, b: 2, c: 3, d: 4 });
+    });
   });
 
   describe('pluck', function () {

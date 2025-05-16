@@ -8,7 +8,7 @@ describe('underpants library', () => {
     });
   });
 
-  describe('_.typeOff()', () => {
+  describe('_.typeOf()', () => {
     it('should handle simple datatypes', () => {
       assert.strictEqual(_.typeOf('a'), 'string');
       assert.strictEqual(_.typeOf(10), 'number');
@@ -496,11 +496,11 @@ describe('underpants library', () => {
 
   describe('_.pluck()', () => {
     beforeEach(() => {
-      sinon.spy(_, "map");
-    })
+      sinon.spy(_, 'map');
+    });
     afterEach(() => {
       _.map.restore();
-    })
+    });
     const inputData = [
       { name: 'Ralph', age: 22 },
       { name: 'Jimmy', age: 13 },

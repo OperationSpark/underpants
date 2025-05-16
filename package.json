@@ -10,7 +10,8 @@
   "scripts": {
     "pretest": "npm install",
     "test": "mocha ./test/underpants.spec.js || :",
-    "posttest": "rm -rf ./test ./node_modules"
+    "posttest": "rm -rf ./test ./node_modules",
+    "prettier": "prettier . --write"
   },
   "repository": {
     "type": "git",

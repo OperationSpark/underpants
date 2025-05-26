@@ -51,7 +51,6 @@ describe('underpants library', () => {
       assert.deepEqual(
         _.first(['a', 'b', 'c'], -1),
         [],
-        'Should return empty list if numerical argument is not a positive number.'
       );
     });
     it('should return empty array if the array param is not an an array', () => {

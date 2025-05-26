@@ -201,6 +201,12 @@ describe('underpants library', () => {
   });
 
   describe('_.unique()', () => {
+    beforeEach(() => {
+      sinon.spy(_, "indexOf");
+    });
+    afterEach(() => {
+      _.indexOf.restore();
+    });
     const inputData = [
       'a',
       1,
@@ -219,8 +225,8 @@ describe('underpants library', () => {
       assert.deepEqual(_.unique(inputData), ['a', 1, 'c', false, 'b', 5, null]);
     });
     it('should invoke _.indexOf() method', () => {
-      const func = _.unique.toString();
-      assert.equal(func.includes('_.indexOf('), true);
+      _.unique(["a", "a", 1, 1, "b", "b", "b"]);
+      _.indexOf.called.should.be.true;
     });
     it('should not have side effects', () => {
       assert.deepEqual(inputData, [

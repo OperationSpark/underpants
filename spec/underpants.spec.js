@@ -585,7 +585,7 @@ describe('underpants library', () => {
         assert.equal(console.log.args.length > 0, true);
       }
     });
-    it('should take in the current value as an argument if collection is an object', () => {
+    it('should take in the current key as an argument if collection is an object', () => {
       const input = { a: 1, b: 2 };
       const logs = ['a', 'b'];
       _.every(input, (v, k, o) => {

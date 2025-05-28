@@ -16,14 +16,14 @@ describe('underpants library', () => {
       assert.strictEqual(_.typeOf(undefined), 'undefined');
       assert.strictEqual(
         _.typeOf(function () {}),
-        'function'
+        'function',
       );
     });
     it('should return `object` for objects intended as as collections', () => {
       assert.strictEqual(
         _.typeOf({ a: 'one' }),
         'object',
-        'Should handle objects.'
+        'Should handle objects.',
       );
     });
     it('should return `array` for array inputs', () => {
@@ -35,7 +35,7 @@ describe('underpants library', () => {
     it('should return `function` for function inputs', () => {
       assert.strictEqual(
         _.typeOf(function () {}),
-        'function'
+        'function',
       );
     });
   });
@@ -48,10 +48,7 @@ describe('underpants library', () => {
       assert.equal(_.first(['a', 'b', 'c']), 'a');
     });
     it('should return empty array if numerical argument is not a positive number', () => {
-      assert.deepEqual(
-        _.first(['a', 'b', 'c'], -1),
-        [],
-      );
+      assert.deepEqual(_.first(['a', 'b', 'c'], -1), []);
     });
     it('should return empty array if the array param is not an an array', () => {
       assert.deepEqual(_.first({ a: 'b' }, 2), []);
@@ -202,7 +199,7 @@ describe('underpants library', () => {
 
   describe('_.unique()', () => {
     beforeEach(() => {
-      sinon.spy(_, "indexOf");
+      sinon.spy(_, 'indexOf');
     });
     afterEach(() => {
       _.indexOf.restore();
@@ -225,7 +222,7 @@ describe('underpants library', () => {
       assert.deepEqual(_.unique(inputData), ['a', 1, 'c', false, 'b', 5, null]);
     });
     it('should invoke _.indexOf() method', () => {
-      _.unique(["a", "a", 1, 1, "b", "b", "b"]);
+      _.unique(['a', 'a', 1, 1, 'b', 'b', 'b']);
       _.indexOf.called.should.be.true;
     });
     it('should not have side effects', () => {
@@ -264,7 +261,7 @@ describe('underpants library', () => {
         _.filter(inputData, (e, i, a) => {
           return typeof e === 'string';
         }),
-        ['a', 'b', 'c']
+        ['a', 'b', 'c'],
       );
     });
     it('callback function should take in the current index as one of its arguments', () => {
@@ -321,7 +318,7 @@ describe('underpants library', () => {
         _.reject(inputData, (e) => {
           return typeof e === 'string';
         }),
-        [1, 2, 4]
+        [1, 2, 4],
       );
     });
     it('callback function should take in the current index as an argument', () => {
@@ -377,7 +374,7 @@ describe('underpants library', () => {
         [
           ['a', 'b', 'c'],
           [1, 2, 4],
-        ]
+        ],
       );
     });
     it('callback function should take in the current index as an argument', () => {
@@ -738,7 +735,7 @@ describe('underpants library', () => {
           acc += current;
           return acc;
         },
-        100
+        100,
       );
       assert.equal(result, 200);
     });
@@ -756,7 +753,7 @@ describe('underpants library', () => {
           acc += current;
           return acc;
         },
-        0
+        0,
       );
       assert.equal(result, 100);
     });
@@ -769,7 +766,7 @@ describe('underpants library', () => {
           acc += current;
           return acc;
         },
-        0
+        0,
       );
       const resultTwo = _.reduce([3, 4], (acc, current, i) => {
         console.log(i);
@@ -813,7 +810,7 @@ describe('underpants library', () => {
         { c: 'three' },
         { d: 'four' },
         { e: 'five' },
-        { f: 'six' }
+        { f: 'six' },
       );
       assert.deepEqual(inputData, {
         a: 'one',

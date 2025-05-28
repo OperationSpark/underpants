@@ -5,5 +5,5 @@
   "editor.codeActionsOnSave": {
     "source.organizeImports": "explicit"
   },
-  "files.insertFinalNewline": true,
+  "files.insertFinalNewline": true
 }

@@ -22,14 +22,14 @@ describe('Underpants', () => {
       assert.strictEqual(_.typeOf(undefined), 'undefined');
       assert.strictEqual(
         _.typeOf(function () {}),
-        'function'
+        'function',
       );
     });
     it('should return `object` for objects intended as as collections', () => {
       assert.strictEqual(
         _.typeOf({ a: 'one' }),
         'object',
-        'Should handle objects.'
+        'Should handle objects.',
       );
     });
     it('should return `array` for array inputs', () => {
@@ -41,7 +41,7 @@ describe('Underpants', () => {
     it('should return `function` for function inputs', () => {
       assert.strictEqual(
         _.typeOf(function () {}),
-        'function'
+        'function',
       );
     });
   });
@@ -259,7 +259,7 @@ describe('Underpants', () => {
         _.filter(inputData, (e, i, a) => {
           return typeof e === 'string';
         }),
-        ['a', 'b', 'c']
+        ['a', 'b', 'c'],
       );
     });
     it('callback function should take in the current index as one of its arguments', () => {
@@ -316,7 +316,7 @@ describe('Underpants', () => {
         _.reject(inputData, (e) => {
           return typeof e === 'string';
         }),
-        [1, 2, 4]
+        [1, 2, 4],
       );
     });
     it('callback function should take in the current index as an argument', () => {
@@ -372,7 +372,7 @@ describe('Underpants', () => {
         [
           ['a', 'b', 'c'],
           [1, 2, 4],
-        ]
+        ],
       );
     });
     it('callback function should take in the current index as an argument', () => {
@@ -733,7 +733,7 @@ describe('Underpants', () => {
           acc += current;
           return acc;
         },
-        100
+        100,
       );
       assert.equal(result, 200);
     });
@@ -751,7 +751,7 @@ describe('Underpants', () => {
           acc += current;
           return acc;
         },
-        0
+        0,
       );
       assert.equal(result, 100);
     });
@@ -764,7 +764,7 @@ describe('Underpants', () => {
           acc += current;
           return acc;
         },
-        0
+        0,
       );
       const resultTwo = _.reduce([3, 4], (acc, current, i) => {
         console.log(i);
@@ -807,7 +807,7 @@ describe('Underpants', () => {
         { c: 'three' },
         { d: 'four' },
         { e: 'five' },
-        { f: 'six' }
+        { f: 'six' },
       );
       assert.deepEqual(inputData, {
         a: 'one',

@@ -40,6 +40,18 @@ const _ = {};
  * _.typeOf([1,2,3]) -> "array"
  */
 
+_.typeOf = function(value){
+  if (typeof value !== 'object'){
+    return typeof value;
+  } else if (Array.isArray(value)){
+    return 'array';
+  } else if (value === null){
+    return 'null'
+  } else {
+    return 'object';
+  }
+}
+
 /** _.first
  * Arguments:
  *   1) An array

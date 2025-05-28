@@ -9,35 +9,23 @@ describe('underpants library', () => {
   });
 
   describe('_.typeOf()', () => {
-    it('should handle simple datatypes', () => {
-      assert.strictEqual(_.typeOf('a'), 'string');
-      assert.strictEqual(_.typeOf(10), 'number');
-      assert.strictEqual(_.typeOf(false), 'boolean');
-      assert.strictEqual(_.typeOf(undefined), 'undefined');
-      assert.strictEqual(
-        _.typeOf(function () {}),
-        'function',
-      );
-    });
-    it('should return `object` for objects intended as as collections', () => {
-      assert.strictEqual(
-        _.typeOf({ a: 'one' }),
-        'object',
-        'Should handle objects.',
-      );
-    });
-    it('should return `array` for array inputs', () => {
-      assert.strictEqual(_.typeOf([1, 3]), 'array');
-    });
-    it('should return `null` for null inputs', () => {
-      assert.strictEqual(_.typeOf(null), 'null');
-    });
-    it('should return `function` for function inputs', () => {
-      assert.strictEqual(
-        _.typeOf(function () {}),
-        'function',
-      );
-    });
+    const tests = [
+      {input: 'hello world', expected: 'string'},
+      {input: 100, expected: 'number'},
+      {input: false, expected: 'boolean'},
+      {input: undefined, expected: 'undefined'},
+      {input: function(x,y){return x + y}, expected: 'function'},
+      {input: null, expected: 'null'},
+      {input: [1, 2, 3], expected: 'array'},
+      {input: { a: 1, b: 2 }, expected: 'object'}
+    ];
+
+    tests.forEach((e, i) => {
+      const { input, expected } = e;
+      it(`should return "${expected}" for ${expected} input`, () => {
+        assert.equal(_.typeOf(input), expected);
+      });
+    })
   });
 
   describe('_.first()', () => {

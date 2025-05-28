@@ -1,10 +1,4 @@
-const path = '../underpants',
-  _ = require(path),
-  expect = require('chai').expect,
-  assert = require('chai').assert,
-  sinon = require('sinon');
-
-describe('Underpants', () => {
+describe('underpants library', () => {
   describe('_.identity()', () => {
     it('should return input value unchanged', () => {
       assert.strictEqual(_.identity(14), 14);
@@ -57,6 +51,7 @@ describe('Underpants', () => {
       assert.deepEqual(_.last(['a', 'b', 'c'], 2), ['b', 'c']);
     });
     it('should return the last element if no numerical argument is given', () => {
+      console.log(_.last);
       assert.equal(_.last(['a', 'b', 'c']), 'c');
     });
     it('should return empty array if numerical argument is not a positive number', () => {
@@ -136,6 +131,7 @@ describe('Underpants', () => {
       });
       if (console.log.args.length) {
         console.log.args.forEach((e, i) => {
+          console.dir('hit this');
           assert.equal(e[0], logs[i]);
         });
       } else {
@@ -190,6 +186,12 @@ describe('Underpants', () => {
   });
 
   describe('_.unique()', () => {
+    beforeEach(() => {
+      sinon.spy(_, 'indexOf');
+    });
+    afterEach(() => {
+      _.indexOf.restore();
+    });
     const inputData = [
       'a',
       1,
@@ -208,8 +210,8 @@ describe('Underpants', () => {
       assert.deepEqual(_.unique(inputData), ['a', 1, 'c', false, 'b', 5, null]);
     });
     it('should invoke _.indexOf() method', () => {
-      const func = _.unique.toString();
-      assert.equal(func.includes('_.indexOf('), true);
+      _.unique(['a', 'a', 1, 1, 'b', 'b', 'b']);
+      _.indexOf.called.should.be.true;
     });
     it('should not have side effects', () => {
       assert.deepEqual(inputData, [
@@ -574,7 +576,7 @@ describe('Underpants', () => {
         assert.equal(console.log.args.length > 0, true);
       }
     });
-    it('should take in the current value as an argument if collection is an object', () => {
+    it('should take in the current key as an argument if collection is an object', () => {
       const input = { a: 1, b: 2 };
       const logs = ['a', 'b'];
       _.every(input, (v, k, o) => {
@@ -759,6 +761,7 @@ describe('Underpants', () => {
         acc += current;
         return acc;
       });
+      console.dir(console.log.args);
       if (console.log.args.length > 0) {
         console.log.args.forEach((e, i) => {
           assert.equal(e[0], logs[i]);

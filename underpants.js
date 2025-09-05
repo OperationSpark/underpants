@@ -20,7 +20,10 @@ var _ = {};
 *   _.identity(5) === 5
 *   _.identity({a: "b"}) === {a: "b"}
 */
-
+_.identity = function(val) {
+    // Returns input
+    return val;
+};
 
 /** _.typeOf
 * Arguments:
@@ -41,7 +44,22 @@ var _ = {};
 * _.typeOf("javascript") -> "string"
 * _.typeOf([1,2,3]) -> "array"
 */
+_.typeOf = function(val) {
+    // Default output
+    var output = 'undefined';
 
+    // Checks input type
+    typeof val === 'string' ? output = 'string' : null;
+    typeof val === 'number' ? output = 'number' : null;
+    typeof val === 'boolean' ? output = 'boolean' : null;
+    Array.isArray(val) ? output = 'array' : 
+    typeof val === 'object' ? output = 'object' : null;
+    typeof val === 'function' ? output = 'function' : null;
+    val === null ? output = 'null' : null;
+
+    // Returns input type
+    return output;
+};
 
 /** _.first
 * Arguments:
@@ -60,7 +78,25 @@ var _ = {};
 *   _.first(["a", "b", "c"], 1) -> "a"
 *   _.first(["a", "b", "c"], 2) -> ["a", "b"]
 */
+_.first = function(arr, num) {
+    // Conditions to run function
+    if (!Array.isArray(arr) || num < 0) {
+        return [];
+    } else if (!num || _.typeOf(num) !== 'number') {
+        return arr[0];
+    } else if (num > arr.length) {
+        return arr;
+    }
 
+    // Adds first 'num' values to items
+    var items = [];
+    for (var i = 0; i < num; i++) {
+        items.push(arr[i]);
+    }
+
+    // Returns new array
+    return items;
+};
 
 /** _.last
 * Arguments:
@@ -79,7 +115,25 @@ var _ = {};
 *   _.last(["a", "b", "c"], 1) -> "c"
 *   _.last(["a", "b", "c"], 2) -> ["b", "c"]
 */
+_.last = function(arr, num) {
+    // Conditions to run function
+    if (!Array.isArray(arr) || num < 0) {
+        return [];
+    } else if (!num || _.typeOf(num) !== 'number') {
+        return arr[arr.length - 1];
+    } else if (num > arr.length) {
+        return arr;
+    }
 
+    // Adds last 'num' values to items
+    var items = [];
+    for (var i = arr.length - num; i < arr.length; i++) {
+        items.push(arr[i])
+    }
+
+    // Returns new array
+    return items;
+};
 
 /** _.indexOf
 * Arguments:
@@ -96,7 +150,18 @@ var _ = {};
 *   _.indexOf(["a","b","c"], "c") -> 2
 *   _.indexOf(["a","b","c"], "d") -> -1
 */
+_.indexOf = function(arr, val) {
+    // Searches for first occurrance of 'val' in 'arr'
+    for (var i = 0; i < arr.length; i++) {
+        if (val === arr[i]) {
+            // Returns index of 'val'
+            return i;
+        }
+    }
 
+    // Returns if 'val' is not found
+    return -1;
+};
 
 /** _.contains
 * Arguments:
@@ -112,7 +177,18 @@ var _ = {};
 * Examples:
 *   _.contains([1,"two", 3.14], "two") -> true
 */
+_.contains = function(arr, val) {
+    // Default ouput
+    var output = false;
 
+    // Sets output to true if 'val' is found in 'arr'
+    for (var i = 0; i < arr.length; i++) {
+        val === arr[i] ? output = true : null;
+    }
+
+    // Returns true or false
+    return output;
+};
 
 /** _.each
 * Arguments:
@@ -129,7 +205,18 @@ var _ = {};
 *   _.each(["a","b","c"], function(e,i,a){ console.log(e)});
 *      -> should log "a" "b" "c" to the console
 */
-
+_.each = function (coll, func) {
+    // Checks if 'coll' is an array or object
+    if (Array.isArray(coll)) {
+        // Passes each element of 'coll' through 'func'
+        coll.forEach((element, index, array) => func(element, index, array));
+    } else if (_.typeOf(coll) === 'object') {
+        // Passes each element of 'coll' through 'func'
+        for (var [key, value] of Object.entries(coll)) {
+            func(value, key, coll);
+        }
+    }
+};
 
 /** _.unique
 * Arguments:
@@ -140,7 +227,16 @@ var _ = {};
 * Examples:
 *   _.unique([1,2,2,4,5,6,5,2]) -> [1,2,4,5,6]
 */
+_.unique = function(arr) {
+    // Adds unique elements from 'arr' to output
+   var output = [];
+    _.each(arr, function (element) { 
+        _.contains(output, element) ? null : output.push(element);
+    })
 
+    // returns a new array
+    return output;
+};
 
 /** _.filter
 * Arguments:
@@ -157,7 +253,14 @@ var _ = {};
 * Extra Credit:
 *   use _.each in your implementation
 */
+_.filter = function (arr, func) {
+    // Adds elements from 'arr' that return true when passed through 'func' to output
+    var output = [];
+    _.each(arr, (element, index, array) => func(element, index, array) ? output.push(element) : null)
 
+    // Returns a new array
+    return output;
+}
 
 /** _.reject
 * Arguments:
@@ -171,7 +274,14 @@ var _ = {};
 * Examples:
 *   _.reject([1,2,3,4,5], function(e){return e%2 === 0}) -> [1,3,5]
 */
+_.reject = function(arr, func) {
+    // Adds elements from 'arr' that return false when passed through 'func' to output
+    var output = [];
+    _.each(arr, (element, index, array) => !func(element, index, array) ? output.push(element) : null)
 
+    // Returns a new array
+    return output;
+}
 
 /** _.partition
 * Arguments:
@@ -191,7 +301,14 @@ var _ = {};
 *   }); -> [[2,4],[1,3,5]]
 }
 */
+_.partition = function(arr, func) {
+    // Runs 'arr' through 'func' and adds true elements to output[0] and false elements to output[1]
+    var output = [[], []];
+    _.each(arr, (element, index, array) => func(element, index, array) ? output[0].push(element) : output[1].push(element));
 
+    // Returns a new array
+    return output;
+}
 
 /** _.map
 * Arguments:
@@ -208,7 +325,20 @@ var _ = {};
 * Examples:
 *   _.map([1,2,3,4], function(e){return e * 2}) -> [2,4,6,8]
 */
+_.map = function(coll, func) {
+    // Runs 'coll' through 'func' then adds the result to output
+    var output = [];
+    if (Array.isArray(coll)) {
+        _.each(coll, (element, index, array) => output.push(func(element, index, array)));
+    } else if (_.typeOf(coll) === 'object') {
+        for (var [key, value] of Object.entries(coll)) {
+            output.push(func(value, key, coll))
+        }
+    }
 
+    // Returns a new array
+    return output;
+}
 
 /** _.pluck
 * Arguments:
@@ -220,7 +350,21 @@ var _ = {};
 * Examples:
 *   _.pluck([{a: "one"}, {a: "two"}], "a") -> ["one", "two"]
 */
+_.pluck = function(arr, prop) {
+    // Iterates over 'arr'
+    var output = _.map(arr, function (element) {
+        // Iterates over objects in 'arr'
+        for (var [key, value] of Object.entries(element)) {
+            // Finds 'prop' and returns its value
+            var val;
+            key === prop ? val = value : null;
+            return val;
+        }
+    });
 
+    // Returns a new array
+    return output;
+}
 
 /** _.every
 * Arguments:
@@ -242,7 +386,22 @@ var _ = {};
 *   _.every([2,4,6], function(e){return e % 2 === 0}) -> true
 *   _.every([1,2,3], function(e){return e % 2 === 0}) -> false
 */
+_.every = function(coll, func) {
+    // Runs 'coll' through 'func' and assigns output to true if every element returns true, and false if one is false 
+    var output = true;
+    if (Array.isArray(coll)) {
+        !func ? 
+        _.each(coll, (element, index, array) => element ? null : output = false) :
+        _.each(coll, (element, index, array) => func(element, index, array) ? null : output = false)
+    } else if (_.typeOf(coll) === 'object') {
+        !func ? 
+        _.each(coll, (element, index, array) => element ? null : output = false) :
+        _.each(coll, (element, index, array) => func(element, index, array) ? null : output = false)
+    }
 
+    // Returns boolean
+    return output;
+}
 
 /** _.some
 * Arguments:
@@ -264,7 +423,22 @@ var _ = {};
 *   _.some([1,3,5], function(e){return e % 2 === 0}) -> false
 *   _.some([1,2,3], function(e){return e % 2 === 0}) -> true
 */
+_.some = function(coll, func) {
+    // Runs 'coll' through 'func' and assigns output to true if one element returns true, and false if all are false 
+    var output = false;
+    if (Array.isArray(coll)) {
+        !func ? 
+        _.each(coll, (element, index, array) => element ? output = true : null) :
+        _.each(coll, (element, index, array) => func(element, index, array) ? output = true : null)
+    } else if (_.typeOf(coll) === 'object') {
+        !func ? 
+        _.each(coll, (element, index, array) => element ? output = true : null) :
+        _.each(coll, (element, index, array) => func(element, index, array) ? output = true : output = true)
+    }
 
+    // Returns boolean
+    return output;
+}
 
 /** _.reduce
 * Arguments:
@@ -284,7 +458,17 @@ var _ = {};
 * Examples:
 *   _.reduce([1,2,3], function(previousSum, currentValue, currentIndex){ return previousSum + currentValue }, 0) -> 6
 */
+_.reduce = function(arr, func, seed) {
+    // Sets prevResult to 'seed', or 1 if 'seed' is undefined
+    var prevResult;
+    seed !== undefined ? prevResult = seed : prevResult = 1;
 
+    // Runs prevResult, the current element, and the current through 'func' 
+    _.each(arr, (element, index, array) => prevResult = func(prevResult, element, index));
+
+    // Returns the final result of 'func'
+    return prevResult;
+}
 
 /** _.extend
 * Arguments:
@@ -300,6 +484,17 @@ var _ = {};
 *   _.extend(data, {b:"two"}); -> data now equals {a:"one",b:"two"}
 *   _.extend(data, {a:"two"}); -> data now equals {a:"two"}
 */
+_.extend = function(obj1) {
+    // Iterates over all arguments and adds the properties to 'obj1'
+    for (var i = 1; i < arguments.length; i++) {
+        for (var [key, value] of Object.entries(arguments[i])) {
+            obj1[key] = value;
+        }
+    }
+
+    // Returns 'obj1'
+    return obj1;
+}
 
 //////////////////////////////////////////////////////////////////////
 // DON'T REMOVE THIS CODE ////////////////////////////////////////////

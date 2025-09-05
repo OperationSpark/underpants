@@ -1,33 +1,33 @@
 {
-  "name": "underpants",
+  "name": "@lealonwolfe/underpants",
   "version": "1.0.0",
-  "private": true,
-  "description": "Functional Functions for Fun",
-  "main": "data.js",
-  "directories": {
-    "test": "test"
-  },
-  "scripts": {
-    "pretest": "npm install",
-    "test": "mocha ./test/underpants.spec.js || :",
-    "posttest": "rm -rf  ./node_modules"
-
-  },
+  "description": "Functional utility library - student implementation of underscore.js",
+  "main": "underpants.js",
+  "keywords": ["functional", "utilities", "underscore", "lodash", "functional-programming"],
+  "author": "Lealon Wolfe <lealonwolfeschool@gmail.com>",
+  "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/OperationSpark/underpants.git"
+    "url": "https://github.com/lealonwolfe/underpants.git"
   },
-  "author": "jfraboni",
-  "license": "CC",
   "bugs": {
-    "url": "https://github.com/OperationSpark/underpants/issues"
+    "url": "https://github.com/lealonwolfe/underpants/issues"
   },
-  "homepage": "https://github.com/OperationSpark/underpants",
+  "homepage": "https://github.com/lealonwolfe/underpants#readme",
+  "engines": {
+    "node": ">=12.0.0"
+  },
+  "scripts": {
+    "test": "mocha test/*.spec.js",
+    "test:browser": "open index.html"
+  },
   "devDependencies": {
-    "chai": "^3.5.0",
-    "istanbul": "^0.4.5",
-    "lodash": "^4.17.4",
-    "mocha": "^3.4.1",
-    "sinon": "^2.2.0"
-  }
+    "chai": "^4.3.7",
+    "mocha": "^10.2.0"
+  },
+  "files": [
+    "underpants.js",
+    "README.md",
+    "LICENSE"
+  ]
 }
